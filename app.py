@@ -432,7 +432,7 @@ else:
                     st.markdown(f"[Find Study Guides ↗]({get_youtube_link(gap)})")
         else:
             st.success("No missing core technical competency gaps recognized.")
-                    pdf_bytes = create_pdf_report(st.session_state.percentage, st.session_state.skill_gaps, st.session_state.narrative)
+        pdf_bytes = create_pdf_report(st.session_state.percentage, st.session_state.skill_gaps, st.session_state.narrative)
         st.download_button(
             label="📥 Download Summary Report (PDF)", 
             data=pdf_bytes, 
