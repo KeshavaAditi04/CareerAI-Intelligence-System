@@ -126,7 +126,7 @@ def create_pdf_report(percentage, gaps, summary):
 def reset_analysis():
     st.session_state.analyzed = False
     
-    # Explicitly delete the file uploaders and text box from memory
+    # Fully flushes file boxes and inputs out of the interface cache memory
     if "p1_uploader" in st.session_state:
         del st.session_state["p1_uploader"]
     if "p2_uploader" in st.session_state:
@@ -149,30 +149,30 @@ if 'weighted_skill_score' not in st.session_state: st.session_state.weighted_ski
 
 # --- 4. SIDEBAR NAVIGATION & BACKGROUND ENGINE ---
 st.sidebar.title("🌑 CareerAI Platform v1.2")
-page = st.sidebar.radio("Navigate System:", ["🔍 Tech Career Pathway Predictor", "🎯 Precision Profile Matching"])
+page = st.sidebar.radio("Navigate System:", ["🔍 Tech Career Pathway Predictor", "🎯 Precision Profile Matching"], key="navigation_radio")
 
 WHITE_BG = "https://github.com/KeshavaAditi04/CareerAI-Intelligence-System/raw/refs/heads/main/ChatGPT%20Image%20Jul%207,%202026,%2002_42_59%20AM.png"
 GREEN_BG = "https://github.com/KeshavaAditi04/CareerAI-Intelligence-System/raw/refs/heads/main/ChatGPT%20Image%20Jul%207,%202026,%2002_46_38%20AM.png"
 
 bg_url = GREEN_BG if page == "🔍 Tech Career Pathway Predictor" else WHITE_BG
 
-# Setup high-visibility color values dynamically
+# Setup high-visibility color values dynamically for main workspace content area
 if page == "🎯 Precision Profile Matching":
-    text_color = "#0F172A"       # Clear deep slate for main text
-    label_color = "#1E293B"      # Dark gray for widget text
-    header_color = "#991B1B"     # Strong burgundy for main titles
+    text_color = "#0F172A"       
+    label_color = "#1E293B"      
+    header_color = "#991B1B"     
     card_bg = "rgba(255, 255, 255, 0.85)" 
     card_border = "rgba(15, 23, 42, 0.15)"
 else:
-    text_color = "#FFFFFF"       # Solid bright white for main text
-    label_color = "#F1F5F9"      # Soft off-white for widgets
-    header_color = "#F59E0B"     # Amber gold for main titles
+    text_color = "#FFFFFF"       
+    label_color = "#F1F5F9"      
+    header_color = "#F59E0B"     
     card_bg = "rgba(13, 22, 18, 0.85)" 
     card_border = "rgba(245, 158, 11, 0.3)"
 
 css_template = """
     <style>
-    /* GLOBAL BACKGROUND CONTAINER */
+    /* MAIN INTERFACE BACKGROUND FRAMEWORKS */
     [data-testid="stAppViewContainer"], 
     [data-testid="stHeader"], 
     .main, 
@@ -185,7 +185,7 @@ css_template = """
         animation: none !important;
     }
 
-    /* DYNAMIC BODY FONTS INTERACTION */
+    /* TEXT FIELDS AND MARKDOWN HANDLING */
     .stMarkdown p, .stMarkdown li, div, p, span {
         color: VAR_TEXT_COLOR !important;
     }
@@ -195,13 +195,13 @@ css_template = """
         font-weight: 600 !important;
     }
 
-    /* TYPOGRAPHY CONTRAST */
+    /* MAIN PANEL TITLES AND SUBHEADERS */
     h1, h2, h3, .stSubheader, [data-testid="stHeader"] h1 {
         color: VAR_HEADER_COLOR !important;
         font-weight: 800 !important;
     }
 
-    /* CONTENT CONTAINERS AND CARDS */
+    /* CARD CONTAINER BACKGROUND RENDERING */
     [data-testid="stForm"], .stAlert, .gap-box-critical, .gap-box-optimize, .roadmap-card {
         background-color: VAR_CARD_BG !important;
         border: 1px solid VAR_CARD_BORDER !important;
@@ -209,22 +209,45 @@ css_template = """
         -webkit-backdrop-filter: blur(12px) !important;
     }
 
-    /* SIDEBAR TEXT ISOLATION (Always Stay Bright) */
+    /* =========================================================================
+       MASTER SIDEBAR TEXT CONTRAST OVERRIDES (FIXES DARK TEXT ON BLACK CANVAS)
+       ========================================================================= */
     [data-testid="stSidebar"] {
         background-color: #050807 !important; 
         border-right: 1px solid rgba(245, 158, 11, 0.15) !important;
     }
     
-    [data-testid="stSidebar"] .stMarkdown p, 
-    [data-testid="stSidebar"] label, 
-    [data-testid="stSidebar"] span,
-    [data-testid="stSidebar"] h1,
-    [data-testid="stSidebar"] h2 {
+    /* Force title to stay bright */
+    [data-testid="stSidebar"] h1 {
         color: #FFFFFF !important;
     }
     
+    /* Force 'Aditi Das' subheader to remain Golden */
     [data-testid="stSidebar"] h3 {
         color: #F59E0B !important;
+    }
+
+    /* Force all general text elements, lists, items, and labels inside the sidebar container to be white */
+    [data-testid="stSidebar"] p,
+    [data-testid="stSidebar"] span,
+    [data-testid="stSidebar"] label,
+    [data-testid="stSidebar"] caption,
+    [data-testid="stSidebar"] .stMarkdown,
+    [data-testid="stSidebar"] [data-testid="stWidgetLabel"] p {
+        color: #F8FAFC !important;
+    }
+
+    /* FIXES THE RADIO BUTTON OPTION TEXT COLOR */
+    [data-testid="stSidebar"] [data-testid="stWidgetLabel"] + div label span,
+    [data-testid="stSidebar"] [data-testid="stRadio"] div p {
+        color: #FFFFFF !important;
+        font-weight: 500 !important;
+    }
+
+    /* FIXES THE CODE BLOCK TEXT COLOR (Changes invisible white font to rich black on the white box) */
+    [data-testid="stSidebar"] code {
+        color: #1E293B !important;
+        font-weight: 700 !important;
     }
     </style>
 """
@@ -253,7 +276,6 @@ st.sidebar.divider()
 if page == "🔍 Tech Career Pathway Predictor":
     st.title("🔍 Tech Career Pathway Predictor")
     
-    # User-Friendly Information Note
     st.caption("⚠️ **System Scope Note:** This workspace evaluates profiles strictly optimized for Computer Science, Information Technology, and Software Engineering tracks.")
     st.write("Upload your academic resume to identify which tech domain fits your skill patterns best.")
     
@@ -299,7 +321,6 @@ if page == "🔍 Tech Career Pathway Predictor":
                 fig_bar = px.bar(df, x='Match Strength (%)', y='Target Domain', orientation='h', 
                                  color='Match Strength (%)', color_continuous_scale='Reds', text='Match Strength (%)')
                 
-                # Plotly dynamic label coloring check
                 fig_bar.update_layout(
                     paper_bgcolor="rgba(0,0,0,0)", 
                     font_color="#0F172A" if page == "🎯 Precision Profile Matching" else "#FFFFFF", 
@@ -317,7 +338,7 @@ else:
     st.title("🎯 Precision Profile Matching")
     st.write("Analyze how well your current resume aligns with a targeted Computer Science job specification.")
 
-        with st.form("alignment_matrix_form"):
+    with st.form("alignment_matrix_form"):
         res_file = st.file_uploader("Upload Academic Resume (PDF)", type=["pdf"], key="p2_uploader")
         job_desc = st.text_area("Target Job Profile Requirements / Description", key="job_requirements_text")
         submit_btn = st.form_submit_button("Run Alignment Audit")
@@ -369,7 +390,6 @@ else:
         col1, col2, col3 = st.columns(3)
         chart_text_color = "#0F172A" if page == "🎯 Precision Profile Matching" else "#FFFFFF"
         
-        # Helper configuration to safely apply colors inside the Plotly canvas context
         def create_gauge(title, score, bar_color):
             fig = go.Figure(go.Indicator(
                 mode="gauge+number",
@@ -399,7 +419,6 @@ else:
         with col3:
             st.plotly_chart(create_gauge("Interview Call Chance", st.session_state.interview_probability, "#1E3A8A"), use_container_width=True)
 
-        # Content Displays
         st.subheader("💡 Suggested Improvements")
         if st.session_state.resume_suggestions:
             for rec in st.session_state.resume_suggestions:
@@ -407,7 +426,6 @@ else:
         else:
             st.success("✅ Structural verification checks passed cleanly!")
 
-        # 3-Week Plan & Gaps Layouts...
         st.subheader("🎯 Missing Technical Competencies")
         if st.session_state.skill_gaps:
             cols = st.columns(len(st.session_state.skill_gaps) if len(st.session_state.skill_gaps) < 4 else 4)
@@ -418,7 +436,6 @@ else:
         else:
             st.success("No missing core technical competency gaps recognized.")
 
-        # Download Report Option
         pdf_bytes = create_pdf_report(st.session_state.percentage, st.session_state.skill_gaps, st.session_state.narrative)
         st.download_button(label="📥 Download Summary Report (PDF)", data=pdf_bytes, file_name="CareerAI_Analysis.pdf", mime="application/pdf", use_container_width=True)
         
