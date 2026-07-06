@@ -48,7 +48,7 @@ SECTION_PATTERNS = {
     "certifications": ["certifications", "licenses"]
 }
 
-# --- 3. PARSING HEURISTICS ---
+# --- 3. HELPER FUNCTIONS & RESET ENGINE ---
 def clean_text(text):
     text = re.sub(r'[^\x00-\x7f]', r' ', text)
     return re.sub(r'\s+', ' ', text).strip().lower()
@@ -123,6 +123,12 @@ def create_pdf_report(percentage, gaps, summary):
     pdf.multi_cell(0, 10, f"Executive Analytical Context:\n{safe_summary}")
     return pdf.output(dest='S').encode('latin-1')
 
+def reset_analysis():
+    st.session_state.analyzed = False
+    if "resume_file_uploader" in st.session_state:
+        del st.session_state["resume_file_uploader"]
+    st.rerun()
+
 # Initialize Session States
 if 'analyzed' not in st.session_state: st.session_state.analyzed = False
 if 'percentage' not in st.session_state: st.session_state.percentage = 0.0
@@ -143,23 +149,23 @@ GREEN_BG = "https://github.com/KeshavaAditi04/CareerAI-Intelligence-System/raw/r
 
 bg_url = GREEN_BG if page == "🔍 Tech Career Pathway Predictor" else WHITE_BG
 
-# Assigning strict high-contrast font colors for each page context
+# Setup high-visibility color values dynamically
 if page == "🎯 Precision Profile Matching":
-    text_color = "#1E293B"       # Crisp dark slate text for the white background page
-    label_color = "#334155"      # Dark gray for input field labels
-    header_color = "#991B1B"     # Strong burgundy for prominent titles
+    text_color = "#0F172A"       # Clear deep slate for main text
+    label_color = "#1E293B"      # Dark gray for widget text
+    header_color = "#991B1B"     # Strong burgundy for main titles
     card_bg = "rgba(255, 255, 255, 0.85)" 
-    card_border = "rgba(30, 41, 59, 0.15)"
+    card_border = "rgba(15, 23, 42, 0.15)"
 else:
-    text_color = "#FFFFFF"       # Bright white text for the green background page
-    label_color = "#F1F5F9"      # Light silver-white for input field labels
-    header_color = "#F59E0B"     # Golden amber for prominent titles
+    text_color = "#FFFFFF"       # Solid bright white for main text
+    label_color = "#F1F5F9"      # Soft off-white for widgets
+    header_color = "#F59E0B"     # Amber gold for main titles
     card_bg = "rgba(13, 22, 18, 0.85)" 
     card_border = "rgba(245, 158, 11, 0.3)"
 
 css_template = """
     <style>
-    /* Keep your backgrounds exactly as they are */
+    /* GLOBAL BACKGROUND CONTAINER */
     [data-testid="stAppViewContainer"], 
     [data-testid="stHeader"], 
     .main, 
@@ -172,24 +178,23 @@ css_template = """
         animation: none !important;
     }
 
-    /* Target main body text explicitly */
-    .stMarkdown p, .stMarkdown li, p {
+    /* DYNAMIC BODY FONTS INTERACTION */
+    .stMarkdown p, .stMarkdown li, div, p, span {
         color: VAR_TEXT_COLOR !important;
     }
     
-    /* Target form field labels explicitly */
     [data-testid="stWidgetLabel"] p, label {
         color: VAR_LABEL_COLOR !important;
         font-weight: 600 !important;
     }
 
-    /* Target titles explicitly */
+    /* TYPOGRAPHY CONTRAST */
     h1, h2, h3, .stSubheader, [data-testid="stHeader"] h1 {
         color: VAR_HEADER_COLOR !important;
         font-weight: 800 !important;
     }
 
-    /* Style container elements and input boxes */
+    /* CONTENT CONTAINERS AND CARDS */
     [data-testid="stForm"], .stAlert, .gap-box-critical, .gap-box-optimize, .roadmap-card {
         background-color: VAR_CARD_BG !important;
         border: 1px solid VAR_CARD_BORDER !important;
@@ -197,7 +202,7 @@ css_template = """
         -webkit-backdrop-filter: blur(12px) !important;
     }
 
-    /* Force the Sidebar text to always stay bright (since the sidebar is always black) */
+    /* SIDEBAR TEXT ISOLATION (Always Stay Bright) */
     [data-testid="stSidebar"] {
         background-color: #050807 !important; 
         border-right: 1px solid rgba(245, 158, 11, 0.15) !important;
@@ -212,7 +217,7 @@ css_template = """
     }
     
     [data-testid="stSidebar"] h3 {
-        color: #F59E0B !important; /* Forces your developer name to pop in Gold */
+        color: #F59E0B !important;
     }
     </style>
 """
@@ -237,14 +242,13 @@ with st.sidebar.container():
 
 st.sidebar.divider()
 
-# --- 5. PAGE 1: CAREER PATHWAY PREDICTOR ---
+# --- 5. PAGE 1: TECH CAREER PATHWAY PREDICTOR ---
 if page == "🔍 Tech Career Pathway Predictor":
     st.title("🔍 Tech Career Pathway Predictor")
     
-    # 3. Explicit clear side-note advising scope limitations to students
-    st.caption("⚠️ **System Scope Note:** This system evaluates profiles specifically optimized for Computing, Tech, and Software Engineering fields.")
-    
-    st.write("Upload your academic profile to see which specialized tech domain aligns closest with your skill set.")
+    # User-Friendly Information Note
+    st.caption("⚠️ **System Scope Note:** This workspace evaluates profiles strictly optimized for Computer Science, Information Technology, and Software Engineering tracks.")
+    st.write("Upload your academic resume to identify which tech domain fits your skill patterns best.")
     
     benchmarks = {
         "Data Analytics": "SQL, Python, Power BI, data visualization, and statistical modeling.",
@@ -257,7 +261,7 @@ if page == "🔍 Tech Career Pathway Predictor":
         "Cybersecurity": "network security, ethical hacking, Linux, SIEM, risk analysis."
     }
 
-    res_file = st.file_uploader("Upload Academic Profile / Resume (PDF)", type=["pdf"])
+    res_file = st.file_uploader("Upload Academic Profile / Resume (PDF)", type=["pdf"], key="resume_file_uploader")
     
     if res_file:
         with st.status("Analyzing Profile Skill Sets...", expanded=True) as status:
@@ -287,192 +291,130 @@ if page == "🔍 Tech Career Pathway Predictor":
                 
                 fig_bar = px.bar(df, x='Match Strength (%)', y='Target Domain', orientation='h', 
                                  color='Match Strength (%)', color_continuous_scale='Reds', text='Match Strength (%)')
-                fig_bar.update_layout(paper_bgcolor="rgba(0,0,0,0)", font_color="white" if text_color == "#F8FAFC" else "black", plot_bgcolor="rgba(0,0,0,0)", height=450)
-                st.plotly_chart(fig_bar, use_container_width=True)
-            # --- 6. PAGE 2: PRECISION MATCH ---
-elif page == "🎯 Precision Profile Matching":
-    st.title("🎯 Precision Semantic Alignment Pipeline")
-    
-    with st.form("computational_matrix_form"):
-        col1, col2 = st.columns(2)
-        with col1:
-            uploaded_file = st.file_uploader("Upload Profile Signature (PDF)", type=["pdf"])
-        with col2:
-            jd_text = st.text_area("Target Job Vector Requirements (Paste JD)", height=200)
-        
-        sandbox_input = st.text_input("🧬 Predictive Skill Sandbox Insertion Hub (Type skills to simulate real-time updates)")
-        submit_button = st.form_submit_button("🚀 INITIATE SEMANTIC AGGREGATION")
-
-    if submit_button:
-        if uploaded_file and jd_text:
-            # --- PROGRESSIVE AI THINKING STATUS TICKER ---
-            with st.status("Synchronizing Distributed Vector Arrays...", expanded=True) as status:
-                st.write("Extracting deep layout content from profile array...")
-                resume_raw = extract_text(uploaded_file.getvalue())
-                clean_jd = clean_text(jd_text)
-                clean_res = clean_text(resume_raw)
-                time.sleep(0.5)
                 
-                st.write("Parsing structural resume segments and metadata rules...")
-                sections_found = detect_resume_sections(resume_raw)
-                ats_score, ats_rec = calculate_ats_score(resume_raw, sections_found)
-                time.sleep(0.4)
-                
-                st.write("Generating neural tensor embeddings for alignment scoring...")
-                res_vec = model.encode(clean_res, convert_to_tensor=True)
-                jd_vec = model.encode(clean_jd, convert_to_tensor=True)
-                base_score = util.cos_sim(res_vec, jd_vec).item()
-                
-                resume_keywords = get_keywords(resume_raw)
-                jd_keywords = get_keywords(clean_jd)
-                
-                if sandbox_input.strip():
-                    st.write(f"Injecting simulated parameters from sandbox: '{sandbox_input}'...")
-                    resume_keywords.update(get_keywords(sandbox_input))
-                    sand_vec = model.encode(clean_text(sandbox_input), convert_to_tensor=True)
-                    sand_match = util.cos_sim(sand_vec, jd_vec).item()
-                    final_score = min(base_score + (sand_match * 0.12), 1.0)
-                    time.sleep(0.3)
-                else:
-                    final_score = base_score
-
-                missing_raw = jd_keywords - resume_keywords
-                st.session_state.skill_gaps = [m.upper() for m in missing_raw if m.lower() in SKILL_WHITELIST]
-                st.session_state.percentage = round(final_score * 100, 1)
-                
-                st.session_state.matched_skills = list(resume_keywords.intersection(jd_keywords).intersection(SKILL_WHITELIST))
-                st.session_state.weighted_skill_score = calculate_weighted_score(st.session_state.matched_skills)
-                
-                st.session_state.ats_score = ats_score
-                st.session_state.resume_suggestions = ats_rec
-                st.session_state.interview_probability = calculate_interview_probability(
-                    st.session_state.percentage, ats_score, st.session_state.matched_skills
+                # Plotly dynamic label coloring check
+                fig_bar.update_layout(
+                    paper_bgcolor="rgba(0,0,0,0)", 
+                    font_color="#0F172A" if page == "🎯 Precision Profile Matching" else "#FFFFFF", 
+                    plot_bgcolor="rgba(0,0,0,0)", 
+                    height=450
                 )
+                st.plotly_chart(fig_bar, use_container_width=True)
                 
-                if st.session_state.percentage > 80:
-                    st.session_state.narrative = "Profile exhibits elite structural affinity. Semantic distribution closely maps to high-tier target metrics."
-                elif 40 <= st.session_state.percentage <= 80:
-                    st.session_state.narrative = f"Competitive logic matrix found. Profile contains foundational patterns but remains under-indexed for major target structures."
-                else:
-                    st.session_state.narrative = "High dimensional variance observed. Vector configuration suggests a significant professional re-indexing pathway is required."
+                st.divider()
+                if st.button("🔄 Upload New Resume", use_container_width=True):
+                    reset_analysis()
+
+# --- 6. PAGE 2: PRECISION PROFILE MATCHING ---
+else:
+    st.title("🎯 Precision Profile Matching")
+    st.write("Analyze how well your current resume aligns with a targeted Computer Science job specification.")
+
+    with st.form("alignment_matrix_form"):
+        res_file = st.file_uploader("Upload Academic Resume (PDF)", type=["pdf"])
+        job_desc = st.text_area("Target Job Profile Requirements / Description")
+        submit_btn = st.form_submit_button("Run Alignment Audit")
+
+    if submit_btn and res_file and job_desc:
+        with st.status("Running Profile Alignment System...", expanded=True) as status:
+            st.write("Extracting structural data content...")
+            raw_resume_text = extract_text(res_file.getvalue())
+            resume_text = clean_text(raw_resume_text)
+            job_clean = clean_text(job_desc)
+            time.sleep(0.3)
+            
+            if not resume_text.strip() or not job_clean.strip():
+                st.error("Incomplete execution data. Ensure both fields contain valid information.")
+                status.update(label="Audit Terminated", state="error")
+            else:
+                st.write("Mapping skill sets...")
+                resume_words = get_keywords(resume_text)
+                job_words = get_keywords(job_clean)
                 
-                status.update(label="Semantic Compilation Complete! Vector Matrix Populated.", state="complete", expanded=False)
+                matched_skills = list(job_words.intersection(resume_words).intersection(SKILL_WHITELIST))
+                all_requested_skills = job_words.intersection(SKILL_WHITELIST)
+                gaps = list(all_requested_skills.difference(resume_words))
+                time.sleep(0.3)
+                
+                st.write("Processing context values...")
+                res_vec = model.encode(resume_text, convert_to_tensor=True)
+                job_vec = model.encode(job_clean, convert_to_tensor=True)
+                match_percentage = round(util.cos_sim(res_vec, job_vec).item() * 100, 1)
+                
+                sections = detect_resume_sections(raw_resume_text)
+                ats_score, suggestions = calculate_ats_score(raw_resume_text, sections)
+                
+                st.session_state.percentage = match_percentage
+                st.session_state.skill_gaps = gaps
+                st.session_state.ats_score = ats_score
+                st.session_state.resume_suggestions = suggestions
+                st.session_state.matched_skills = matched_skills
+                st.session_state.weighted_skill_score = calculate_weighted_score(matched_skills)
+                st.session_state.interview_probability = calculate_interview_probability(match_percentage, ats_score, matched_skills)
+                
+                st.session_state.narrative = f"The candidate profile shares a {match_percentage}% core similarity match with the job role requirements."
                 st.session_state.analyzed = True
-                
-            # --- CELEBRATORY SNOW TRIGGER FOR ELITE MATCHES ---
-            if st.session_state.percentage >= 75:
-                st.snow()
+                status.update(label="Alignment Complete!", state="complete", expanded=False)
 
     if st.session_state.analyzed:
-        # --- COMPACT HIGH-CONTRAST GAUGES ---
-        col_g1, col_g2, col_g3 = st.columns(3)
-        with col_g1:
-            fig_1 = go.Figure(go.Indicator(mode="gauge+number", value=st.session_state.percentage, 
-                title={'text': "Semantic Affinity Score", 'font': {'color': "#FFFFFF", 'size': 15, 'weight': 'bold'}},
-                gauge={'bar': {'color': "#8B0000"}, 'bgcolor': "rgba(255,255,255,0.05)"}))
-            fig_1.update_layout(paper_bgcolor="rgba(0,0,0,0)", font={'color': "#FFFFFF"}, height=240, margin=dict(t=40, b=10, l=30, r=30))
-            st.plotly_chart(fig_1, use_container_width=True)
-            
-        with col_g2:
-            fig_2 = go.Figure(go.Indicator(mode="gauge+number", value=st.session_state.ats_score, 
-                title={'text': "ATS Layout structural Index", 'font': {'color': "#FFFFFF", 'size': 15, 'weight': 'bold'}},
-                gauge={'bar': {'color': "#EAB308"}, 'bgcolor': "rgba(255,255,255,0.05)"}))
-            fig_2.update_layout(paper_bgcolor="rgba(0,0,0,0)", font={'color': "#FFFFFF"}, height=240, margin=dict(t=40, b=10, l=30, r=30))
-            st.plotly_chart(fig_2, use_container_width=True)
-            
-        with col_g3:
-            fig_3 = go.Figure(go.Indicator(mode="gauge+number", value=st.session_state.interview_probability, 
-                title={'text': "Interview Convocation Likelihood", 'font': {'color': "#FFFFFF", 'size': 15, 'weight': 'bold'}},
-                gauge={'bar': {'color': "#64748B"}, 'bgcolor': "rgba(255,255,255,0.05)"}))
-            fig_3.update_layout(paper_bgcolor="rgba(0,0,0,0)", font={'color': "#FFFFFF"}, height=240, margin=dict(t=40, b=10, l=30, r=30))
-            st.plotly_chart(fig_3, use_container_width=True)
+        st.subheader("📊 Alignment Metrics Hub")
+        
+        col1, col2, col3 = st.columns(3)
+        chart_text_color = "#0F172A" if page == "🎯 Precision Profile Matching" else "#FFFFFF"
+        
+        # Helper configuration to safely apply colors inside the Plotly canvas context
+        def create_gauge(title, score, bar_color):
+            fig = go.Figure(go.Indicator(
+                mode="gauge+number",
+                value=score,
+                number={'font': {'size': 38, 'color': chart_text_color}},
+                title={'text': title, 'font': {'size': 16, 'color': chart_text_color}},
+                gauge={
+                    'axis': {'range': [0, 100], 'tickwidth': 1, 'tickcolor': chart_text_color},
+                    'bar': {'color': bar_color},
+                    'bgcolor': "rgba(0,0,0,0.05)",
+                    'bordercolor': "rgba(0,0,0,0.1)"
+                }
+            ))
+            fig.update_layout(
+                paper_bgcolor="rgba(0,0,0,0)", 
+                plot_bgcolor="rgba(0,0,0,0)", 
+                font=dict(color=chart_text_color),
+                height=240, 
+                margin=dict(l=30, r=30, t=50, b=10)
+            )
+            return fig
 
-# --- NARRATIVE COMPLIANCE SUMMARY ---
-        st.info(f"🧠 **System Executive Context:** {st.session_state.narrative}")
+        with col1:
+            st.plotly_chart(create_gauge("Profile Match Rating", st.session_state.percentage, "#991B1B"), use_container_width=True)
+        with col2:
+            st.plotly_chart(create_gauge("Layout Check Rating", st.session_state.ats_score, "#F59E0B"), use_container_width=True)
+        with col3:
+            st.plotly_chart(create_gauge("Interview Call Chance", st.session_state.interview_probability, "#1E3A8A"), use_container_width=True)
 
-        # =====================================================================
-        # 👑 STRATEGIC AI RESUME ENHANCEMENTS (KEYWORD GAP ANALYSIS)
-        # =====================================================================
-        st.write("") 
-        st.markdown("### 👑 Strategic AI Resume Enhancements")
+        # Content Displays
+        st.subheader("💡 Suggested Improvements")
+        if st.session_state.resume_suggestions:
+            for rec in st.session_state.resume_suggestions:
+                st.error(f"❌ {rec}")
+        else:
+            st.success("✅ Structural verification checks passed cleanly!")
 
+        # 3-Week Plan & Gaps Layouts...
+        st.subheader("🎯 Missing Technical Competencies")
         if st.session_state.skill_gaps:
-            st.info("💡 **AI Optimization Alert:** Our semantic parsing engine detected that the target job description heavily weights specific keywords that are missing or weak in your profile signature. Adding these will instantly boost your alignment vector.")
-            
-            # Create a clean layout for the recommendations
-            for skill in sorted(st.session_state.skill_gaps):
-                st.markdown(f"✨ **Missing Target Vector:** Consider integrating the phrase `{skill.upper()}` into your professional profile or experience summaries.")
+            cols = st.columns(len(st.session_state.skill_gaps) if len(st.session_state.skill_gaps) < 4 else 4)
+            for idx, gap in enumerate(st.session_state.skill_gaps):
+                with cols[idx % 4]:
+                    st.info(f"🔍 **{gap.upper()}**")
+                    st.markdown(f"[Find Study Guides ↗]({get_youtube_link(gap)})")
         else:
-            st.success("🏆 **Perfect Skill Alignment:** Excellent structural integrity! Your profile matrix already maps cleanly to all critical industry domain keywords found within the target requirements vector.")
+            st.success("No missing core technical competency gaps recognized.")
 
-        # --- STRATEGIC COMPETENCY GAPS ---
-        st.divider()
-        st.subheader("⚔️ Automated Competency Deficit Matrix")
-        
-        if not st.session_state.skill_gaps:
-            st.success("✨ Dimensional completeness achieved. No technical skill missing links discovered.")
-        else:
-            half = max(1, len(st.session_state.skill_gaps) // 2)
-            crit_items = st.session_state.skill_gaps[:half]
-            opt_items = st.session_state.skill_gaps[half:]
-            
-            c1, c2 = st.columns(2)
-            with c1:
-                st.markdown("#### 🛑 Primary Structural Discrepancies")
-                for gap in crit_items[:3]:
-                    st.markdown(f'<div class="gap-box-critical">☠️ Primary Deficit Token: <b>{gap}</b></div>', unsafe_allow_html=True)
-            with c2:
-                st.markdown("#### ⚠️ Secondary Vector Optimizations")
-                for gap in (opt_items[:3] if opt_items else crit_items[3:6]):
-                    st.markdown(f'<div class="gap-box-optimize">⚡ Optimization Priority: <b>{gap}</b></div>', unsafe_allow_html=True)
-
-        # --- ADAPTIVE DEVELOPMENT ROADMAP ---
-        st.divider()
-        st.subheader("📅 Heuristic Adaptive Development Sequence (3-Week Matrix)")
-        
-        if st.session_state.skill_gaps:
-            steps = [st.session_state.skill_gaps[i] if i < len(st.session_state.skill_gaps) else "Advanced Optimization" for i in range(3)]
-            r1, r2, r3 = st.columns(3)
-            with r1:
-                st.markdown(f'<div class="roadmap-card">⏳ <b>Week 1: Foundations</b><br><p style="margin-bottom:8px; color:#94A3B8;">Isolate and process:</p><b style="font-size:1.15rem; color:#FFF;">{steps[0]}</b><br><a class="yt-link" href="{get_youtube_link(steps[0])}" target="_blank">🎥 Open Curated Repository ↗</a></div>', unsafe_allow_html=True)
-            with r2:
-                st.markdown(f'<div class="roadmap-card">⏳ <b>Week 2: Integration</b><br><p style="margin-bottom:8px; color:#94A3B8;">Deploy implementations for:</p><b style="font-size:1.15rem; color:#FFF;">{steps[1]}</b><br><a class="yt-link" href="{get_youtube_link(steps[1])}" target="_blank">🎥 Open Curated Repository ↗</a></div>', unsafe_allow_html=True)
-            with r3:
-                st.markdown(f'<div class="roadmap-card">⏳ <b>Week 3: Production</b><br><p style="margin-bottom:8px; color:#94A3B8;">Refine scalable pipelines for:</p><b style="font-size:1.15rem; color:#FFF;">{steps[2]}</b><br><a class="yt-link" href="{get_youtube_link(steps[2])}" target="_blank">🎥 Open Curated Repository ↗</a></div>', unsafe_allow_html=True)
-
-        # --- RESUME AUDIT SUGGESTIONS ---
-        st.divider()
-        st.subheader("🛠️ Structural Portfolio Audit Engineering")
-        if not st.session_state.resume_suggestions:
-            st.success("Structure and metadata standards are fully optimized.")
-        else:
-            for rec in st.session_state.resume_suggestions[:4]:
-                st.markdown(f'<div class="gap-box-optimize">⚙️ <b>Optimization Rule:</b> {rec}</div>', unsafe_allow_html=True)
-
-        # --- MARKET ACCELERATION INSIGHTS ---
-        st.divider()
-        st.subheader("📈 Real-Time Macro-Market Demand Projections")
-        if st.session_state.matched_skills:
-            m_cols = st.columns(min(len(st.session_state.matched_skills), 4))
-            for i, skill in enumerate(st.session_state.matched_skills[:4]):
-                with m_cols[i]:
-                    demand = MARKET_DEMAND.get(skill.lower(), "Stable Index")
-                    st.markdown(f'<div class="gap-box-critical" style="text-align:center;">📊 <b>{skill.upper()}</b><br><span style="color:#FFD700; font-size:0.9rem;">{demand}</span></div>', unsafe_allow_html=True)
-
-        # --- CONFIDENCE EXPLAINABILITY BAR CHART ---
-        st.divider()
-        st.subheader("📊 Architectural Multi-Criteria Confidence Metrics")
-        
-        breakdown_df = pd.DataFrame({
-            "Evaluation Dimension": ["Semantic Proximity Match", "ATS Layout Structural Quality", "Weighted Core Competency Volumetrics", "Static Context Heuristics", "Keyword Architecture Index"],
-            "System Score Score": [st.session_state.percentage, st.session_state.ats_score, min(st.session_state.weighted_skill_score * 5, 100), 75, 82]
-        })
-        fig_break = px.bar(breakdown_df, x='Evaluation Dimension', y='System Score Score', color='System Score Score', color_continuous_scale='Reds')
-        fig_break.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_color="white")
-        st.plotly_chart(fig_break, use_container_width=True)
-
-        # --- PDF SUMMARY REPORT EXPORT ---
-        st.divider()
-        st.subheader("📥 Data Vector Reporting Export")
+        # Download Report Option
         pdf_bytes = create_pdf_report(st.session_state.percentage, st.session_state.skill_gaps, st.session_state.narrative)
-        st.download_button("📄 Download Deep System Analysis Logs (PDF)", pdf_bytes, "System_Analysis_Logs.pdf", "application/pdf")
+        st.download_button(label="📥 Download Summary Report (PDF)", data=pdf_bytes, file_name="CareerAI_Analysis.pdf", mime="application/pdf", use_container_width=True)
+        
+        st.divider()
+        if st.button("🔄 Upload a Different Profile", use_container_width=True):
+            reset_analysis()
