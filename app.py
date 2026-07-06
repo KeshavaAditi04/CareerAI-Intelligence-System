@@ -126,7 +126,6 @@ def create_pdf_report(percentage, gaps, summary):
 def reset_analysis():
     st.session_state.analyzed = False
     
-    # Fully flushes file boxes and inputs out of the interface cache memory
     if "p1_uploader" in st.session_state:
         del st.session_state["p1_uploader"]
     if "p2_uploader" in st.session_state:
@@ -156,19 +155,16 @@ GREEN_BG = "https://github.com/KeshavaAditi04/CareerAI-Intelligence-System/raw/r
 
 bg_url = GREEN_BG if page == "🔍 Tech Career Pathway Predictor" else WHITE_BG
 
-# Setup high-visibility color values dynamically for main workspace content area
+# BOTH backgrounds are light/reflective, so we use rich dark colors on BOTH panels now!
+text_color = "#1E293B"       # Dark Slate gray for crisp text readability
+label_color = "#0F172A"      # Deep midnight black for widgets/labels
+card_bg = "rgba(255, 255, 255, 0.85)" 
+card_border = "rgba(15, 23, 42, 0.15)"
+
 if page == "🎯 Precision Profile Matching":
-    text_color = "#0F172A"       
-    label_color = "#1E293B"      
-    header_color = "#991B1B"     
-    card_bg = "rgba(255, 255, 255, 0.85)" 
-    card_border = "rgba(15, 23, 42, 0.15)"
+    header_color = "#991B1B"     # Strong burgundy for Page 2
 else:
-    text_color = "#FFFFFF"       
-    label_color = "#F1F5F9"      
-    header_color = "#F59E0B"     
-    card_bg = "rgba(13, 22, 18, 0.85)" 
-    card_border = "rgba(245, 158, 11, 0.3)"
+    header_color = "#1E3A8A"     # Deep royal navy for Page 1 title to pop against the green/gold hues
 
 css_template = """
     <style>
@@ -185,26 +181,27 @@ css_template = """
         animation: none !important;
     }
 
-    /* TEXT FIELDS AND MARKDOWN HANDLING */
-    .stMarkdown p, .stMarkdown li, div, p, span {
+    /* FORCE ALL TEXT ELEMENTS, MARKDOWN, AND PARAGRAPHS TO DARK SLATE */
+    .stMarkdown p, .stMarkdown li, div, p, span, .stText p {
         color: VAR_TEXT_COLOR !important;
     }
     
-    [data-testid="stWidgetLabel"] p, label {
+    /* TARGET STREAMLIT SPECIFIC WIDGET LABELS AND DROPAWAY TEXT */
+    [data-testid="stWidgetLabel"] p, label, [data-testid="stFileUploadDropzone"] div {
         color: VAR_LABEL_COLOR !important;
-        font-weight: 600 !important;
+        font-weight: 700 !important;
     }
 
-    /* MAIN PANEL TITLES AND SUBHEADERS */
-    h1, h2, h3, .stSubheader, [data-testid="stHeader"] h1 {
+    /* TARGET HEADINGS EXPLICITLY WITH HIGHER SPECIFICITY CRITERIA */
+    h1, h2, h3, .stSubheader, [data-testid="stHeader"] h1, .stMarkdown h1, .stMarkdown h2, .stMarkdown h3, [data-testid="stHeadingWithLink"] h1 {
         color: VAR_HEADER_COLOR !important;
-        font-weight: 800 !important;
+        font-weight: 900 !important;
     }
 
     /* CARD CONTAINER BACKGROUND RENDERING */
-    [data-testid="stForm"], .stAlert, .gap-box-critical, .gap-box-optimize, .roadmap-card {
+    [data-testid="stForm"], .stAlert, .gap-box-critical, .gap-box-optimize, .roadmap-card, [data-testid="stFileUploadDropzone"] {
         background-color: VAR_CARD_BG !important;
-        border: 1px solid VAR_CARD_BORDER !important;
+        border: 2px solid VAR_CARD_BORDER !important;
         backdrop-filter: blur(12px) !important;
         -webkit-backdrop-filter: blur(12px) !important;
     }
@@ -217,22 +214,22 @@ css_template = """
         border-right: 1px solid rgba(245, 158, 11, 0.15) !important;
     }
     
-    /* Force title to stay bright */
-    [data-testid="stSidebar"] h1 {
+    /* Force sidebar title to stay bright */
+    [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h1 span {
         color: #FFFFFF !important;
     }
     
     /* Force 'Aditi Das' subheader to remain Golden */
-    [data-testid="stSidebar"] h3 {
+    [data-testid="stSidebar"] h3, [data-testid="stSidebar"] h3 span {
         color: #F59E0B !important;
     }
 
-    /* Force all general text elements, lists, items, and labels inside the sidebar container to be white */
+    /* Force all general text elements inside the sidebar container to be white */
     [data-testid="stSidebar"] p,
     [data-testid="stSidebar"] span,
     [data-testid="stSidebar"] label,
     [data-testid="stSidebar"] caption,
-    [data-testid="stSidebar"] .stMarkdown,
+    [data-testid="stSidebar"] .stMarkdown p,
     [data-testid="stSidebar"] [data-testid="stWidgetLabel"] p {
         color: #F8FAFC !important;
     }
@@ -241,7 +238,7 @@ css_template = """
     [data-testid="stSidebar"] [data-testid="stWidgetLabel"] + div label span,
     [data-testid="stSidebar"] [data-testid="stRadio"] div p {
         color: #FFFFFF !important;
-        font-weight: 500 !important;
+        font-weight: 600 !important;
     }
 
     /* FIXES THE CODE BLOCK TEXT COLOR (Changes invisible white font to rich black on the white box) */
@@ -323,7 +320,7 @@ if page == "🔍 Tech Career Pathway Predictor":
                 
                 fig_bar.update_layout(
                     paper_bgcolor="rgba(0,0,0,0)", 
-                    font_color="#0F172A" if page == "🎯 Precision Profile Matching" else "#FFFFFF", 
+                    font_color="#1E293B", # Dark font for the data visualization text labels
                     plot_bgcolor="rgba(0,0,0,0)", 
                     height=450
                 )
@@ -388,7 +385,7 @@ else:
         st.subheader("📊 Alignment Metrics Hub")
         
         col1, col2, col3 = st.columns(3)
-        chart_text_color = "#0F172A" if page == "🎯 Precision Profile Matching" else "#FFFFFF"
+        chart_text_color = "#1E293B" # Forced charcoal color for layout gauges text readability
         
         def create_gauge(title, score, bar_color):
             fig = go.Figure(go.Indicator(
@@ -437,8 +434,4 @@ else:
             st.success("No missing core technical competency gaps recognized.")
 
         pdf_bytes = create_pdf_report(st.session_state.percentage, st.session_state.skill_gaps, st.session_state.narrative)
-        st.download_button(label="📥 Download Summary Report (PDF)", data=pdf_bytes, file_name="CareerAI_Analysis.pdf", mime="application/pdf", use_container_width=True)
-        
-        st.divider()
-        if st.button("🔄 Upload a Different Profile", use_container_width=True):
-            reset_analysis()
+        st.download_button(label="📥 Download Summary Re
