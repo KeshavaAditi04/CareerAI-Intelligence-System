@@ -59,18 +59,80 @@ st.markdown("""
     [data-testid="stSidebar"] .stMarkdown p, 
     [data-testid="stSidebar"] span {
         color: #A3B8CC !important; 
-    }
+        # --- 4. SIDEBAR NAVIGATION & BACKGROUND ENGINE ---
+st.sidebar.title("🌑 CareerAI Platform v1.2")
+page = st.sidebar.radio("Systems Diagnostic Hub:", ["🔍 Predictive Career Mapping", "🎯 Precision Profile Matching"])
 
-    /* 4. CARDS & FORMS: Frosted Dark Slate Containers with Gold/Emerald Trim */
-    [data-testid="stForm"], .stAlert {
-        background-color: rgba(13, 22, 18, 0.85) !important; /* Deep dark jade well */
-        border: 1px solid rgba(212, 175, 55, 0.25) !important; /* Fine Gold Border */
+# Your exact raw GitHub image URLs
+WHITE_BG = "https://github.com/KeshavaAditi04/CareerAI-Intelligence-System/raw/refs/heads/main/ChatGPT%20Image%20Jul%207,%202026,%2002_42_59%20AM.png"
+GREEN_BG = "https://github.com/KeshavaAditi04/CareerAI-Intelligence-System/raw/refs/heads/main/ChatGPT%20Image%20Jul%207,%202026,%2002_46_38%20AM.png"
+
+# Switch image based on active page
+bg_url = GREEN_BG if page == "🔍 Predictive Career Mapping" else WHITE_BG
+
+# Adaptive text color mapping for accessibility and readability
+if page == "🎯 Precision Profile Matching":
+    # Styling tweaks to ensure crisp readability on your light/white theme
+    text_color = "#0F172A"       # Deep charcoal/slate for readable paragraphs
+    label_color = "#1E293B"      # Darker tone for input labels
+    header_color = "#8B0000"     # Crimson accent for titles
+    card_bg = "rgba(255, 255, 255, 0.75)" # Clean frosted white cards
+    card_border = "rgba(15, 23, 42, 0.15)"
+else:
+    # Your original dark-mode cyberpunk configurations for the green theme
+    text_color = "#F8FAFC"       # Bright white text
+    label_color = "#F8FAFC"
+    header_color = "#D4AF37"     # Royal gold title accent
+    card_bg = "rgba(13, 22, 18, 0.8)" # Dark emerald glassmorphism wells
+    card_border = "rgba(212, 175, 55, 0.2)"
+
+st.markdown(f"""
+    <style>
+    /* 1. CONTAINER: Dynamic Canvas Switching */
+    [data-testid="stAppViewContainer"], 
+    [data-testid="stHeader"], 
+    .main, 
+    .stApp,
+    [data-testid="stAppViewBlockContainer"] {{
+        background-image: url("{bg_url}") !important;
+        background-size: cover !important;
+        background-position: center !important;
+        background-attachment: fixed !important;
+        animation: none !important; /* Disables the old layout scan gradient lines */
+    }}
+
+    /* 2. DYNAMIC TEXT & LABELS BASED ON THEME */
+    [data-testid="stWidgetLabel"] p, label, p, span {{
+        color: {label_color} !important;
+    }}
+    
+    .stMarkdown p {{
+        color: {text_color} !important;
+    }}
+
+    h1, h2, h3, .stSubheader {{
+        color: {header_color} !important;
+        font-weight: 700;
+    }}
+
+    /* 3. DYNAMIC CARDS / BOXES */
+    [data-testid="stForm"], .stAlert, .gap-box-critical, .gap-box-optimize, .roadmap-card {{
+        background-color: {card_bg} !important;
+        border: 1px solid {card_border} !important;
         backdrop-filter: blur(12px) !important;
         -webkit-backdrop-filter: blur(12px) !important;
-        border-radius: 16px !important;
-        box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.6) !important;
-        padding: 30px !important;
-    }
+    }}
+
+    /* 4. SIDEBAR: Matte Black Velvet for High Contrast */
+    [data-testid="stSidebar"], [data-testid="stSidebar"] > div {{
+        background-color: #050807 !important; 
+        border-right: 1px solid rgba(212, 175, 55, 0.15) !important;
+    }}
+    
+    /* Keep your existing button properties intact here... */
+    </style>
+    """, unsafe_allow_html=True)
+
 
     /* 5. INPUT & UPLOAD FIELDS */
     [data-testid="stFileUploadDropzone"], input, textarea {
