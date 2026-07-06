@@ -136,23 +136,26 @@ if 'weighted_skill_score' not in st.session_state: st.session_state.weighted_ski
 
 # --- 4. SIDEBAR NAVIGATION & BACKGROUND ENGINE ---
 st.sidebar.title("🌑 CareerAI Platform v1.2")
-page = st.sidebar.radio("Systems Diagnostic Hub:", ["🔍 Predictive Career Mapping", "🎯 Precision Profile Matching"])
+
+# 1. Updated page names to be specific and intuitive for students
+page = st.sidebar.radio("Navigate System:", ["🔍 Tech Career Pathway Predictor", "🎯 Precision Profile Matching"])
 
 WHITE_BG = "https://github.com/KeshavaAditi04/CareerAI-Intelligence-System/raw/refs/heads/main/ChatGPT%20Image%20Jul%207,%202026,%2002_42_59%20AM.png"
 GREEN_BG = "https://github.com/KeshavaAditi04/CareerAI-Intelligence-System/raw/refs/heads/main/ChatGPT%20Image%20Jul%207,%202026,%2002_46_38%20AM.png"
 
-bg_url = GREEN_BG if page == "🔍 Predictive Career Mapping" else WHITE_BG
+bg_url = GREEN_BG if page == "🔍 Tech Career Pathway Predictor" else WHITE_BG
 
+# 2. Fully optimized text coloring for dark and light backgrounds
 if page == "🎯 Precision Profile Matching":
-    text_color = "#0F172A"       
-    label_color = "#1E293B"      
-    header_color = "#8B0000"     
-    card_bg = "rgba(255, 255, 255, 0.75)" 
-    card_border = "rgba(15, 23, 42, 0.15)"
+    text_color = "#1E293B"       # Clear dark charcoal font for your white theme
+    label_color = "#334155"      # Smooth dark gray for form text labels
+    header_color = "#8B0000"     # Deep burgundy accent for headers
+    card_bg = "rgba(255, 255, 255, 0.85)" 
+    card_border = "rgba(30, 41, 59, 0.15)"
 else:
-    text_color = "#F8FAFC"       
-    label_color = "#F8FAFC"
-    header_color = "#D4AF37"     
+    text_color = "#F8FAFC"       # Clean crisp white font for your emerald theme
+    label_color = "#E2E8F0"      # Light silver gray for widgets
+    header_color = "#D4AF37"     # Royal gold title accent
     card_bg = "rgba(13, 22, 18, 0.8)" 
     card_border = "rgba(212, 175, 55, 0.2)"
 
@@ -170,11 +173,12 @@ css_template = """
         animation: none !important;
     }
 
-    [data-testid="stWidgetLabel"] p, label, p, span {
+    /* Target input titles and raw paragraph texts cleanly */
+    [data-testid="stWidgetLabel"] p, label, span {
         color: VAR_LABEL_COLOR !important;
     }
     
-    .stMarkdown p {
+    .stMarkdown p, div {
         color: VAR_TEXT_COLOR !important;
     }
 
@@ -217,10 +221,14 @@ with st.sidebar.container():
 
 st.sidebar.divider()
 
-# --- 5. PAGE 1: CAREER DISCOVERY ---
-if page == "🔍 Predictive Career Mapping":
-    st.title("🔍 Predictive Career Mapping System")
-    st.write("Processing linguistic parameters to predict structural alignment across industry vectors.")
+# --- 5. PAGE 1: CAREER PATHWAY PREDICTOR ---
+if page == "🔍 Tech Career Pathway Predictor":
+    st.title("🔍 Tech Career Pathway Predictor")
+    
+    # 3. Explicit clear side-note advising scope limitations to students
+    st.caption("⚠️ **System Scope Note:** This system evaluates profiles specifically optimized for Computing, Tech, and Software Engineering fields.")
+    
+    st.write("Upload your academic profile to see which specialized tech domain aligns closest with your skill set.")
     
     benchmarks = {
         "Data Analytics": "SQL, Python, Power BI, data visualization, and statistical modeling.",
@@ -233,40 +241,39 @@ if page == "🔍 Predictive Career Mapping":
         "Cybersecurity": "network security, ethical hacking, Linux, SIEM, risk analysis."
     }
 
-    res_file = st.file_uploader("Insert Academic Document Profile (PDF)", type=["pdf"])
+    res_file = st.file_uploader("Upload Academic Profile / Resume (PDF)", type=["pdf"])
     
     if res_file:
-        with st.status("Initializing Predictive Mapping Framework...", expanded=True) as status:
-            st.write("Extracting structural corpus layout...")
+        with st.status("Analyzing Profile Skill Sets...", expanded=True) as status:
+            st.write("Reading document layout...")
             resume_text = clean_text(extract_text(res_file.getvalue()))
             time.sleep(0.4)
             
             if not resume_text.strip():
-                st.error("Execution Deficit: Unable to compile structural text context.")
-                status.update(label="Framework Execution Fault", state="error")
+                st.error("Error: Could not extract text content from the file.")
+                status.update(label="Analysis Failed", state="error")
             else:
-                st.write("Projecting token embeddings into vector workspace...")
+                st.write("Evaluating field match patterns...")
                 res_vec = model.encode(resume_text, convert_to_tensor=True)
                 time.sleep(0.4)
                 
-                st.write("Running cross-functional similarity indices...")
+                st.write("Calculating match values...")
                 results = []
                 for role, desc in benchmarks.items():
                     bench_vec = model.encode(clean_text(desc), convert_to_tensor=True)
                     score = util.cos_sim(res_vec, bench_vec).item()
-                    results.append({"Target Domain": role, "Similarity Weight": round(score * 100, 1)})
+                    results.append({"Target Domain": role, "Match Strength (%)": round(score * 100, 1)})
                 
-                df = pd.DataFrame(results).sort_values(by="Similarity Weight", ascending=False)
-                status.update(label="Dynamic Role Mapping Compiled Successfully!", state="complete", expanded=False)
+                df = pd.DataFrame(results).sort_values(by="Match Strength (%)", ascending=False)
+                status.update(label="Analysis Completed!", state="complete", expanded=False)
                 
-                st.success(f"💥 Dominant Alignment Predicted: **{df.iloc[0]['Target Domain']}**")
+                st.success(f"💥 Top Recommended Track: **{df.iloc[0]['Target Domain']}**")
                 
-                fig_bar = px.bar(df, x='Similarity Weight', y='Target Domain', orientation='h', 
-                                 color='Similarity Weight', color_continuous_scale='Greens', text='Similarity Weight')
-                fig_bar.update_layout(paper_bgcolor="rgba(0,0,0,0)", font_color="white", plot_bgcolor="rgba(0,0,0,0)", height=450)
+                fig_bar = px.bar(df, x='Match Strength (%)', y='Target Domain', orientation='h', 
+                                 color='Match Strength (%)', color_continuous_scale='Reds', text='Match Strength (%)')
+                fig_bar.update_layout(paper_bgcolor="rgba(0,0,0,0)", font_color="white" if text_color == "#F8FAFC" else "black", plot_bgcolor="rgba(0,0,0,0)", height=450)
                 st.plotly_chart(fig_bar, use_container_width=True)
-
-# --- 6. PAGE 2: PRECISION MATCH ---
+            # --- 6. PAGE 2: PRECISION MATCH ---
 elif page == "🎯 Precision Profile Matching":
     st.title("🎯 Precision Semantic Alignment Pipeline")
     
@@ -282,6 +289,7 @@ elif page == "🎯 Precision Profile Matching":
 
     if submit_button:
         if uploaded_file and jd_text:
+            # --- PROGRESSIVE AI THINKING STATUS TICKER ---
             with st.status("Synchronizing Distributed Vector Arrays...", expanded=True) as status:
                 st.write("Extracting deep layout content from profile array...")
                 resume_raw = extract_text(uploaded_file.getvalue())
@@ -334,6 +342,8 @@ elif page == "🎯 Precision Profile Matching":
                 
                 status.update(label="Semantic Compilation Complete! Vector Matrix Populated.", state="complete", expanded=False)
                 st.session_state.analyzed = True
+                
+            # --- CELEBRATORY SNOW TRIGGER FOR ELITE MATCHES ---
             if st.session_state.percentage >= 75:
                 st.snow()
 
@@ -342,34 +352,38 @@ elif page == "🎯 Precision Profile Matching":
         col_g1, col_g2, col_g3 = st.columns(3)
         with col_g1:
             fig_1 = go.Figure(go.Indicator(mode="gauge+number", value=st.session_state.percentage, 
-                title={'text': "Semantic Affinity Score", 'font': {'color': "#FFFFFF", 'size': 14, 'weight': 'bold'}},
-                gauge={'bar': {'color': "#D4AF37"}, 'bgcolor': "rgba(255,255,255,0.05)"}))
-            fig_1.update_layout(paper_bgcolor="rgba(0,0,0,0)", font={'color': "#FFFFFF"}, height=220, margin=dict(t=40, b=10, l=30, r=30))
+                title={'text': "Semantic Affinity Score", 'font': {'color': "#FFFFFF", 'size': 15, 'weight': 'bold'}},
+                gauge={'bar': {'color': "#8B0000"}, 'bgcolor': "rgba(255,255,255,0.05)"}))
+            fig_1.update_layout(paper_bgcolor="rgba(0,0,0,0)", font={'color': "#FFFFFF"}, height=240, margin=dict(t=40, b=10, l=30, r=30))
             st.plotly_chart(fig_1, use_container_width=True)
             
         with col_g2:
             fig_2 = go.Figure(go.Indicator(mode="gauge+number", value=st.session_state.ats_score, 
-                title={'text': "ATS Layout Structural Index", 'font': {'color': "#FFFFFF", 'size': 14, 'weight': 'bold'}},
-                gauge={'bar': {'color': "#0D9488"}, 'bgcolor': "rgba(255,255,255,0.05)"}))
-            fig_2.update_layout(paper_bgcolor="rgba(0,0,0,0)", font={'color': "#FFFFFF"}, height=220, margin=dict(t=40, b=10, l=30, r=30))
+                title={'text': "ATS Layout structural Index", 'font': {'color': "#FFFFFF", 'size': 15, 'weight': 'bold'}},
+                gauge={'bar': {'color': "#EAB308"}, 'bgcolor': "rgba(255,255,255,0.05)"}))
+            fig_2.update_layout(paper_bgcolor="rgba(0,0,0,0)", font={'color': "#FFFFFF"}, height=240, margin=dict(t=40, b=10, l=30, r=30))
             st.plotly_chart(fig_2, use_container_width=True)
             
         with col_g3:
             fig_3 = go.Figure(go.Indicator(mode="gauge+number", value=st.session_state.interview_probability, 
-                title={'text': "Interview Convocation Likelihood", 'font': {'color': "#FFFFFF", 'size': 14, 'weight': 'bold'}},
-                gauge={'bar': {'color': "#475569"}, 'bgcolor': "rgba(255,255,255,0.05)"}))
-            fig_3.update_layout(paper_bgcolor="rgba(0,0,0,0)", font={'color': "#FFFFFF"}, height=220, margin=dict(t=40, b=10, l=30, r=30))
+                title={'text': "Interview Convocation Likelihood", 'font': {'color': "#FFFFFF", 'size': 15, 'weight': 'bold'}},
+                gauge={'bar': {'color': "#64748B"}, 'bgcolor': "rgba(255,255,255,0.05)"}))
+            fig_3.update_layout(paper_bgcolor="rgba(0,0,0,0)", font={'color': "#FFFFFF"}, height=240, margin=dict(t=40, b=10, l=30, r=30))
             st.plotly_chart(fig_3, use_container_width=True)
 
-        # --- NARRATIVE COMPLIANCE SUMMARY ---
+# --- NARRATIVE COMPLIANCE SUMMARY ---
         st.info(f"🧠 **System Executive Context:** {st.session_state.narrative}")
 
-        # --- STRATEGIC AI RESUME ENHANCEMENTS ---
+        # =====================================================================
+        # 👑 STRATEGIC AI RESUME ENHANCEMENTS (KEYWORD GAP ANALYSIS)
+        # =====================================================================
         st.write("") 
         st.markdown("### 👑 Strategic AI Resume Enhancements")
 
         if st.session_state.skill_gaps:
-            st.markdown("<p style='color:#A3B8CC;'>Our semantic parsing engine detected that the target job description heavily weights specific keywords that are missing or weak in your profile signature. Adding these will instantly boost your alignment vector.</p>", unsafe_allow_html=True)
+            st.info("💡 **AI Optimization Alert:** Our semantic parsing engine detected that the target job description heavily weights specific keywords that are missing or weak in your profile signature. Adding these will instantly boost your alignment vector.")
+            
+            # Create a clean layout for the recommendations
             for skill in sorted(st.session_state.skill_gaps):
                 st.markdown(f"✨ **Missing Target Vector:** Consider integrating the phrase `{skill.upper()}` into your professional profile or experience summaries.")
         else:
@@ -427,7 +441,7 @@ elif page == "🎯 Precision Profile Matching":
             for i, skill in enumerate(st.session_state.matched_skills[:4]):
                 with m_cols[i]:
                     demand = MARKET_DEMAND.get(skill.lower(), "Stable Index")
-                    st.markdown(f'<div class="gap-box-optimize" style="text-align:center;">📊 <b>{skill.upper()}</b><br><span style="color:#D4AF37; font-size:0.9rem;">{demand}</span></div>', unsafe_allow_html=True)
+                    st.markdown(f'<div class="gap-box-critical" style="text-align:center;">📊 <b>{skill.upper()}</b><br><span style="color:#FFD700; font-size:0.9rem;">{demand}</span></div>', unsafe_allow_html=True)
 
         # --- CONFIDENCE EXPLAINABILITY BAR CHART ---
         st.divider()
@@ -437,7 +451,7 @@ elif page == "🎯 Precision Profile Matching":
             "Evaluation Dimension": ["Semantic Proximity Match", "ATS Layout Structural Quality", "Weighted Core Competency Volumetrics", "Static Context Heuristics", "Keyword Architecture Index"],
             "System Score Score": [st.session_state.percentage, st.session_state.ats_score, min(st.session_state.weighted_skill_score * 5, 100), 75, 82]
         })
-        fig_break = px.bar(breakdown_df, x='Evaluation Dimension', y='System Score Score', color='System Score Score', color_continuous_scale='Greens')
+        fig_break = px.bar(breakdown_df, x='Evaluation Dimension', y='System Score Score', color='System Score Score', color_continuous_scale='Reds')
         fig_break.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_color="white")
         st.plotly_chart(fig_break, use_container_width=True)
 
