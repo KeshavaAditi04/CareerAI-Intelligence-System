@@ -10,12 +10,12 @@ from fpdf import FPDF
 from collections import Counter
 import numpy as np
 
-# --- 1. UI CONFIG & ADVANCED CYBERPUNK STYLING ---
+# --- 1. UI CONFIG & PREMIUM PROFESSIONAL THEMING ---
 st.set_page_config(page_title="CareerAI Intelligence System", layout="wide")
 
 st.markdown("""
     <style>
-@keyframes royalScan {
+    @keyframes royalScan {
         0% { background-position: 0 0, 0 0, 0 0; }
         100% { background-position: 0 100%, 0 0, 0 0; }
     }
@@ -28,12 +28,9 @@ st.markdown("""
     [data-testid="stAppViewBlockContainer"] {
         background-color: #0A0F0D !important; /* Luxurious, deep near-black velvet jade */
         background-image: 
-            /* Layer 1: Moving Data Scanlines (Faint Emerald Spark) */
             linear-gradient(rgba(16, 185, 129, 0.02) 2px, transparent 2px),
-            /* Layer 2: Clean Tech Mesh Grid (Muted Slate-Gold Lines) */
             linear-gradient(90deg, rgba(212, 175, 55, 0.04) 1px, transparent 1px),
-            /* Layer 3: Glorious Asgardian Emerald Glow (Top Right Accent) */
-            radial-gradient(circle at 85% 20%, rgba(16, 185, 129, 0.15) 0%, transparent 60%) !important;
+            radial-gradient(circle at 85% 20%, rgba(16, 185, 129, 0.12) 0%, transparent 60%) !important;
         background-size: 100% 40px, 45px 45px, auto !important;
         background-attachment: fixed !important;
         animation: royalScan 28s linear infinite !important;
@@ -42,12 +39,12 @@ st.markdown("""
     /* 2. SIDEBAR: Matte Black Velvet */
     [data-testid="stSidebar"], [data-testid="stSidebar"] > div {
         background-color: #050807 !important; 
-        border-right: 1px solid rgba(212, 175, 55, 0.15) !important; /* Subtle Royal Gold Divider */
+        border-right: 1px solid rgba(212, 175, 55, 0.15) !important; /* Royal Gold Divider */
     }
 
     /* 3. TYPOGRAPHY: Crisp White & Royal Gold Accents */
     h1, h2, h3, .stSubheader {
-        color: #D4AF37 !important; /* Majestic Royal Gold for your main headers! */
+        color: #D4AF37 !important; /* Majestic Royal Gold for main headers */
         font-weight: 700;
         letter-spacing: -0.5px;
         font-family: 'Inter', -apple-system, sans-serif;
@@ -64,24 +61,25 @@ st.markdown("""
         color: #A3B8CC !important; 
     }
 
-    /* 4. CARDS: Frosted Dark Slate Containers with Gold/Emerald Trim */
+    /* 4. CARDS & FORMS: Frosted Dark Slate Containers with Gold/Emerald Trim */
     [data-testid="stForm"], .stAlert {
-        background-color: rgba(13, 22, 18, 0.8) !important; /* Deep dark jade well */
-        border: 1px solid rgba(212, 175, 55, 0.2) !important; /* Fine Gold Border */
+        background-color: rgba(13, 22, 18, 0.85) !important; /* Deep dark jade well */
+        border: 1px solid rgba(212, 175, 55, 0.25) !important; /* Fine Gold Border */
         backdrop-filter: blur(12px) !important;
         -webkit-backdrop-filter: blur(12px) !important;
         border-radius: 16px !important;
         box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.6) !important;
+        padding: 30px !important;
     }
 
     /* 5. INPUT & UPLOAD FIELDS */
     [data-testid="stFileUploadDropzone"], input, textarea {
         background-color: #050807 !important;
         color: #F8FAFC !important;
-        border: 1px solid rgba(212, 175, 55, 0.15) !important;
+        border: 1px solid rgba(212, 175, 55, 0.2) !important;
     }
 
-    /* 6. BUTTON: Pure Glorious Loki/Margaret Emerald Gradient */
+    /* 6. BUTTON: Pure Glorious Emerald Gradient with Gold Trim */
     .stButton>button {
         background: linear-gradient(135deg, #0D9488 0%, #065F46 100%) !important; /* Deep Rich Emerald */
         color: #FFFFFF !important; 
@@ -89,99 +87,65 @@ st.markdown("""
         border-radius: 8px;
         border: 1px solid #D4AF37 !important; /* Gold Trimmed Button */
         padding: 12px;
-        transition: all 0.3s ease;
+        width: 100%;
+        transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
         box-shadow: 0 4px 15px rgba(6, 95, 70, 0.3) !important;
     }
 
     .stButton>button:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 25px rgba(13, 148, 136, 0.5) !important;
-        background: linear-gradient(135deg, #14B8A6 0%, #0D9488 100%) !important; /* Vibrant pop on hover */
+        box-shadow: 0 0 25px rgba(16, 185, 129, 0.6) !important;
+        background: linear-gradient(135deg, #14B8A6 0%, #0D9488 100%) !important; /* Vibrant emerald pop on hover */
     }
     
-    /* Glassmorphism Forms */
-    [data-testid="stForm"] { 
-        border: 1px solid #22222F; 
-        background-color: #13131A; 
-        padding: 30px; 
-        border-radius: 16px; 
-        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-    }
-    
-    /* Elegant CTA Button with Pulse Hover Effect */
-    .stButton>button {
-        background: linear-gradient(135deg, #8B0000 0%, #A30000 100%) !important;
-        color: white !important;
-        font-weight: 600;
-        letter-spacing: 0.5px;
-        width: 100%;
-        border-radius: 8px;
-        border: none !important;
-        padding: 12px;
-        transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-        box-shadow: 0 4px 15px rgba(139, 0, 0, 0.4);
-    }
-    .stButton>button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 0 25px rgba(163, 0, 0, 0.8);
-        background: linear-gradient(135deg, #A30000 0%, #CC0000 100%) !important;
-    }
-    
-    /* Sleek Sidebar Customization */
-    [data-testid="stSidebar"] {
-        background-color: #09090D !important;
-        border-right: 1px solid #1A1A24;
-    }
-    
-    /* Global Card Transition Physics */
+    /* Interactive Fluid Card Hovers */
     .gap-box-critical, .gap-box-optimize, .roadmap-card {
         transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s ease, border-color 0.3s ease !important;
     }
 
-    /* Interactive Fluid Card Hovers */
     .gap-box-critical:hover {
         transform: translateX(4px);
-        background: rgba(255, 77, 77, 0.07) !important;
-        box-shadow: -4px 0 15px rgba(255, 77, 77, 0.2);
+        background: rgba(239, 68, 68, 0.08) !important;
+        box-shadow: -4px 0 15px rgba(239, 68, 68, 0.2);
     }
     .gap-box-optimize:hover {
         transform: translateX(4px);
-        background: rgba(234, 179, 8, 0.07) !important;
-        box-shadow: -4px 0 15px rgba(234, 179, 8, 0.2);
+        background: rgba(212, 175, 55, 0.08) !important;
+        box-shadow: -4px 0 15px rgba(212, 175, 55, 0.2);
     }
     .roadmap-card:hover {
         transform: translateY(-5px);
-        border-color: #FFD700 !important;
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(255, 215, 0, 0.1);
+        border-color: #D4AF37 !important;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(212, 175, 55, 0.15);
     }
 
     /* Modern Glassmorphic Metric Box Styles */
     .gap-box-critical {
-        background: rgba(255, 77, 77, 0.04);
-        border: 1px solid rgba(255, 77, 77, 0.15);
-        border-left: 4px solid #FF4D4D;
+        background: rgba(239, 68, 68, 0.04);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        border-left: 4px solid #EF4444;
         padding: 16px;
         border-radius: 10px;
         margin-bottom: 12px;
     }
     .gap-box-optimize {
-        background: rgba(234, 179, 8, 0.04);
-        border: 1px solid rgba(234, 179, 8, 0.15);
-        border-left: 4px solid #EAB308;
+        background: rgba(212, 175, 55, 0.04);
+        border: 1px solid rgba(212, 175, 55, 0.2);
+        border-left: 4px solid #D4AF37;
         padding: 16px;
         border-radius: 10px;
         margin-bottom: 12px;
     }
     .roadmap-card {
-        background: #13131A;
-        border: 1px solid #222235;
+        background: #0D1612;
+        border: 1px solid rgba(212, 175, 55, 0.15);
         padding: 20px;
         border-radius: 12px;
         margin-bottom: 10px;
         box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
     .yt-link {
-        color: #FF4D4D !important;
+        color: #D4AF37 !important;
         text-decoration: none;
         font-weight: 600;
         font-size: 0.85rem;
@@ -191,7 +155,7 @@ st.markdown("""
         transition: color 0.2s ease;
     }
     .yt-link:hover {
-        color: #FF7373 !important;
+        color: #F3E5AB !important;
         text-decoration: underline !important;
     }
     </style>
@@ -328,10 +292,8 @@ st.sidebar.divider()
 with st.sidebar.container():
     st.caption("⚡ SYSTEM DEVELOPER")
     st.subheader("Aditi Das")
-    
     st.markdown("🎓 **Project Matrix Domain**")
     st.code("BCA Final Year Project | 2026", language="text")
-    
     st.markdown("🧠 **Core Architecture**")
     st.caption("SentenceTransformer NLP")
 
@@ -382,7 +344,7 @@ if page == "🔍 Predictive Career Mapping":
                 st.success(f"💥 Dominant Alignment Predicted: **{df.iloc[0]['Target Domain']}**")
                 
                 fig_bar = px.bar(df, x='Similarity Weight', y='Target Domain', orientation='h', 
-                                 color='Similarity Weight', color_continuous_scale='Reds', text='Similarity Weight')
+                                 color='Similarity Weight', color_continuous_scale='Greens', text='Similarity Weight')
                 fig_bar.update_layout(paper_bgcolor="rgba(0,0,0,0)", font_color="white", plot_bgcolor="rgba(0,0,0,0)", height=450)
                 st.plotly_chart(fig_bar, use_container_width=True)
 
@@ -402,7 +364,6 @@ elif page == "🎯 Precision Profile Matching":
 
     if submit_button:
         if uploaded_file and jd_text:
-            # --- PROGRESSIVE AI THINKING STATUS TICKER ---
             with st.status("Synchronizing Distributed Vector Arrays...", expanded=True) as status:
                 st.write("Extracting deep layout content from profile array...")
                 resume_raw = extract_text(uploaded_file.getvalue())
@@ -455,8 +416,6 @@ elif page == "🎯 Precision Profile Matching":
                 
                 status.update(label="Semantic Compilation Complete! Vector Matrix Populated.", state="complete", expanded=False)
                 st.session_state.analyzed = True
-                
-            # --- CELEBRATORY SNOW TRIGGER FOR ELITE MATCHES ---
             if st.session_state.percentage >= 75:
                 st.snow()
 
@@ -465,38 +424,34 @@ elif page == "🎯 Precision Profile Matching":
         col_g1, col_g2, col_g3 = st.columns(3)
         with col_g1:
             fig_1 = go.Figure(go.Indicator(mode="gauge+number", value=st.session_state.percentage, 
-                title={'text': "Semantic Affinity Score", 'font': {'color': "#FFFFFF", 'size': 15, 'weight': 'bold'}},
-                gauge={'bar': {'color': "#8B0000"}, 'bgcolor': "rgba(255,255,255,0.05)"}))
-            fig_1.update_layout(paper_bgcolor="rgba(0,0,0,0)", font={'color': "#FFFFFF"}, height=240, margin=dict(t=40, b=10, l=30, r=30))
+                title={'text': "Semantic Affinity Score", 'font': {'color': "#FFFFFF", 'size': 14, 'weight': 'bold'}},
+                gauge={'bar': {'color': "#D4AF37"}, 'bgcolor': "rgba(255,255,255,0.05)"}))
+            fig_1.update_layout(paper_bgcolor="rgba(0,0,0,0)", font={'color': "#FFFFFF"}, height=220, margin=dict(t=40, b=10, l=30, r=30))
             st.plotly_chart(fig_1, use_container_width=True)
             
         with col_g2:
             fig_2 = go.Figure(go.Indicator(mode="gauge+number", value=st.session_state.ats_score, 
-                title={'text': "ATS Layout structural Index", 'font': {'color': "#FFFFFF", 'size': 15, 'weight': 'bold'}},
-                gauge={'bar': {'color': "#EAB308"}, 'bgcolor': "rgba(255,255,255,0.05)"}))
-            fig_2.update_layout(paper_bgcolor="rgba(0,0,0,0)", font={'color': "#FFFFFF"}, height=240, margin=dict(t=40, b=10, l=30, r=30))
+                title={'text': "ATS Layout Structural Index", 'font': {'color': "#FFFFFF", 'size': 14, 'weight': 'bold'}},
+                gauge={'bar': {'color': "#0D9488"}, 'bgcolor': "rgba(255,255,255,0.05)"}))
+            fig_2.update_layout(paper_bgcolor="rgba(0,0,0,0)", font={'color': "#FFFFFF"}, height=220, margin=dict(t=40, b=10, l=30, r=30))
             st.plotly_chart(fig_2, use_container_width=True)
             
         with col_g3:
             fig_3 = go.Figure(go.Indicator(mode="gauge+number", value=st.session_state.interview_probability, 
-                title={'text': "Interview Convocation Likelihood", 'font': {'color': "#FFFFFF", 'size': 15, 'weight': 'bold'}},
-                gauge={'bar': {'color': "#64748B"}, 'bgcolor': "rgba(255,255,255,0.05)"}))
-            fig_3.update_layout(paper_bgcolor="rgba(0,0,0,0)", font={'color': "#FFFFFF"}, height=240, margin=dict(t=40, b=10, l=30, r=30))
+                title={'text': "Interview Convocation Likelihood", 'font': {'color': "#FFFFFF", 'size': 14, 'weight': 'bold'}},
+                gauge={'bar': {'color': "#475569"}, 'bgcolor': "rgba(255,255,255,0.05)"}))
+            fig_3.update_layout(paper_bgcolor="rgba(0,0,0,0)", font={'color': "#FFFFFF"}, height=220, margin=dict(t=40, b=10, l=30, r=30))
             st.plotly_chart(fig_3, use_container_width=True)
 
-# --- NARRATIVE COMPLIANCE SUMMARY ---
+        # --- NARRATIVE COMPLIANCE SUMMARY ---
         st.info(f"🧠 **System Executive Context:** {st.session_state.narrative}")
 
-        # =====================================================================
-        # 👑 STRATEGIC AI RESUME ENHANCEMENTS (KEYWORD GAP ANALYSIS)
-        # =====================================================================
+        # --- STRATEGIC AI RESUME ENHANCEMENTS ---
         st.write("") 
         st.markdown("### 👑 Strategic AI Resume Enhancements")
 
         if st.session_state.skill_gaps:
-            st.info("💡 **AI Optimization Alert:** Our semantic parsing engine detected that the target job description heavily weights specific keywords that are missing or weak in your profile signature. Adding these will instantly boost your alignment vector.")
-            
-            # Create a clean layout for the recommendations
+            st.markdown("<p style='color:#A3B8CC;'>Our semantic parsing engine detected that the target job description heavily weights specific keywords that are missing or weak in your profile signature. Adding these will instantly boost your alignment vector.</p>", unsafe_allow_html=True)
             for skill in sorted(st.session_state.skill_gaps):
                 st.markdown(f"✨ **Missing Target Vector:** Consider integrating the phrase `{skill.upper()}` into your professional profile or experience summaries.")
         else:
@@ -554,7 +509,7 @@ elif page == "🎯 Precision Profile Matching":
             for i, skill in enumerate(st.session_state.matched_skills[:4]):
                 with m_cols[i]:
                     demand = MARKET_DEMAND.get(skill.lower(), "Stable Index")
-                    st.markdown(f'<div class="gap-box-critical" style="text-align:center;">📊 <b>{skill.upper()}</b><br><span style="color:#FFD700; font-size:0.9rem;">{demand}</span></div>', unsafe_allow_html=True)
+                    st.markdown(f'<div class="gap-box-optimize" style="text-align:center;">📊 <b>{skill.upper()}</b><br><span style="color:#D4AF37; font-size:0.9rem;">{demand}</span></div>', unsafe_allow_html=True)
 
         # --- CONFIDENCE EXPLAINABILITY BAR CHART ---
         st.divider()
@@ -564,7 +519,7 @@ elif page == "🎯 Precision Profile Matching":
             "Evaluation Dimension": ["Semantic Proximity Match", "ATS Layout Structural Quality", "Weighted Core Competency Volumetrics", "Static Context Heuristics", "Keyword Architecture Index"],
             "System Score Score": [st.session_state.percentage, st.session_state.ats_score, min(st.session_state.weighted_skill_score * 5, 100), 75, 82]
         })
-        fig_break = px.bar(breakdown_df, x='Evaluation Dimension', y='System Score Score', color='System Score Score', color_continuous_scale='Reds')
+        fig_break = px.bar(breakdown_df, x='Evaluation Dimension', y='System Score Score', color='System Score Score', color_continuous_scale='Greens')
         fig_break.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font_color="white")
         st.plotly_chart(fig_break, use_container_width=True)
 
