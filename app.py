@@ -10,226 +10,8 @@ from fpdf import FPDF
 from collections import Counter
 import numpy as np
 
-# --- 1. UI CONFIG & PREMIUM PROFESSIONAL THEMING ---
+# --- 1. UI CONFIG ---
 st.set_page_config(page_title="CareerAI Intelligence System", layout="wide")
-
-st.markdown("""
-    <style>
-    @keyframes royalScan {
-        0% { background-position: 0 0, 0 0, 0 0; }
-        100% { background-position: 0 100%, 0 0, 0 0; }
-    }
-
-    /* 1. CONTAINER: Deep Midnight Jade & Obsidian Velvet Canvas */
-    [data-testid="stAppViewContainer"], 
-    [data-testid="stHeader"], 
-    .main, 
-    .stApp,
-    [data-testid="stAppViewBlockContainer"] {
-        background-color: #0A0F0D !important; /* Luxurious, deep near-black velvet jade */
-        background-image: 
-            linear-gradient(rgba(16, 185, 129, 0.02) 2px, transparent 2px),
-            linear-gradient(90deg, rgba(212, 175, 55, 0.04) 1px, transparent 1px),
-            radial-gradient(circle at 85% 20%, rgba(16, 185, 129, 0.12) 0%, transparent 60%) !important;
-        background-size: 100% 40px, 45px 45px, auto !important;
-        background-attachment: fixed !important;
-        animation: royalScan 28s linear infinite !important;
-    }
-
-    /* 2. SIDEBAR: Matte Black Velvet */
-    [data-testid="stSidebar"], [data-testid="stSidebar"] > div {
-        background-color: #050807 !important; 
-        border-right: 1px solid rgba(212, 175, 55, 0.15) !important; /* Royal Gold Divider */
-    }
-
-    /* 3. TYPOGRAPHY: Crisp White & Royal Gold Accents */
-    h1, h2, h3, .stSubheader {
-        color: #D4AF37 !important; /* Majestic Royal Gold for main headers */
-        font-weight: 700;
-        letter-spacing: -0.5px;
-        font-family: 'Inter', -apple-system, sans-serif;
-    }
-
-    /* Widget Labels & form text */
-    [data-testid="stWidgetLabel"] p, label {
-        color: #F8FAFC !important; /* Crisp white for input instructions */
-    }
-
-    /* Sidebar text colors */
-    [data-testid="stSidebar"] .stMarkdown p, 
-    [data-testid="stSidebar"] span {
-        color: #A3B8CC !important;
-        # --- 4. SIDEBAR NAVIGATION & BACKGROUND ENGINE ---
-st.sidebar.title("🌑 CareerAI Platform v1.2")
-page = st.sidebar.radio("Systems Diagnostic Hub:", ["🔍 Predictive Career Mapping", "🎯 Precision Profile Matching"])
-
-# Your exact raw GitHub image URLs
-WHITE_BG = "https://github.com/KeshavaAditi04/CareerAI-Intelligence-System/raw/refs/heads/main/ChatGPT%20Image%20Jul%207,%202026,%2002_42_59%20AM.png"
-GREEN_BG = "https://github.com/KeshavaAditi04/CareerAI-Intelligence-System/raw/refs/heads/main/ChatGPT%20Image%20Jul%207,%202026,%2002_46_38%20AM.png"
-
-# Switch image based on active page
-bg_url = GREEN_BG if page == "🔍 Predictive Career Mapping" else WHITE_BG
-
-# Adaptive text color mapping for accessibility and readability
-if page == "🎯 Precision Profile Matching":
-    text_color = "#0F172A"       
-    label_color = "#1E293B"      
-    header_color = "#8B0000"     
-    card_bg = "rgba(255, 255, 255, 0.75)" 
-    card_border = "rgba(15, 23, 42, 0.15)"
-else:
-    text_color = "#F8FAFC"       
-    label_color = "#F8FAFC"
-    header_color = "#D4AF37"     
-    card_bg = "rgba(13, 22, 18, 0.8)" 
-    card_border = "rgba(212, 175, 55, 0.2)"
-
-# 1. Write the raw CSS string cleanly without an 'f' prefix
-css_template = """
-    <style>
-    /* MAIN CANVAS SWITCHING */
-    [data-testid="stAppViewContainer"], 
-    [data-testid="stHeader"], 
-    .main, 
-    .stApp,
-    [data-testid="stAppViewBlockContainer"] {
-        background-image: url("VAR_BG_URL") !important;
-        background-size: cover !important;
-        background-position: center !important;
-        background-attachment: fixed !important;
-        animation: none !important;
-    }
-
-    /* DYNAMIC TEXT & LABELS BASED ON THEME */
-    [data-testid="stWidgetLabel"] p, label, p, span {
-        color: VAR_LABEL_COLOR !important;
-    }
-    
-    .stMarkdown p {
-        color: VAR_TEXT_COLOR !important;
-    }
-
-    h1, h2, h3, .stSubheader {
-        color: VAR_HEADER_COLOR !important;
-        font-weight: 700;
-    }
-
-    /* DYNAMIC CARDS & BOXES */
-    [data-testid="stForm"], .stAlert, .gap-box-critical, .gap-box-optimize, .roadmap-card {
-        background-color: VAR_CARD_BG !important;
-        border: 1px solid VAR_CARD_BORDER !important;
-        backdrop-filter: blur(12px) !important;
-        -webkit-backdrop-filter: blur(12px) !important;
-    }
-
-    /* SIDEBAR: High Contrast Matte Dark */
-    [data-testid="stSidebar"], [data-testid="stSidebar"] > div {
-        background-color: #050807 !important; 
-        border-right: 1px solid rgba(212, 175, 55, 0.15) !important;
-    }
-    </style>
-"""
-
-# 2. Safely swap out placeholders for your custom colors
-custom_css = (css_template
-              .replace("VAR_BG_URL", bg_url)
-              .replace("VAR_LABEL_COLOR", label_color)
-              .replace("VAR_TEXT_COLOR", text_color)
-              .replace("VAR_HEADER_COLOR", header_color)
-              .replace("VAR_CARD_BG", card_bg)
-              .replace("VAR_CARD_BORDER", card_border))
-
-# 3. Inject into Streamlit
-st.markdown(custom_css, unsafe_allow_html=True)
-
-    /* 5. INPUT & UPLOAD FIELDS */
-    [data-testid="stFileUploadDropzone"], input, textarea {
-        background-color: #050807 !important;
-        color: #F8FAFC !important;
-        border: 1px solid rgba(212, 175, 55, 0.2) !important;
-    }
-
-    /* 6. BUTTON: Pure Glorious Emerald Gradient with Gold Trim */
-    .stButton>button {
-        background: linear-gradient(135deg, #0D9488 0%, #065F46 100%) !important; /* Deep Rich Emerald */
-        color: #FFFFFF !important; 
-        font-weight: 700;
-        border-radius: 8px;
-        border: 1px solid #D4AF37 !important; /* Gold Trimmed Button */
-        padding: 12px;
-        width: 100%;
-        transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-        box-shadow: 0 4px 15px rgba(6, 95, 70, 0.3) !important;
-    }
-
-    .stButton>button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 0 25px rgba(16, 185, 129, 0.6) !important;
-        background: linear-gradient(135deg, #14B8A6 0%, #0D9488 100%) !important; /* Vibrant emerald pop on hover */
-    }
-    
-    /* Interactive Fluid Card Hovers */
-    .gap-box-critical, .gap-box-optimize, .roadmap-card {
-        transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s ease, border-color 0.3s ease !important;
-    }
-
-    .gap-box-critical:hover {
-        transform: translateX(4px);
-        background: rgba(239, 68, 68, 0.08) !important;
-        box-shadow: -4px 0 15px rgba(239, 68, 68, 0.2);
-    }
-    .gap-box-optimize:hover {
-        transform: translateX(4px);
-        background: rgba(212, 175, 55, 0.08) !important;
-        box-shadow: -4px 0 15px rgba(212, 175, 55, 0.2);
-    }
-    .roadmap-card:hover {
-        transform: translateY(-5px);
-        border-color: #D4AF37 !important;
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(212, 175, 55, 0.15);
-    }
-
-    /* Modern Glassmorphic Metric Box Styles */
-    .gap-box-critical {
-        background: rgba(239, 68, 68, 0.04);
-        border: 1px solid rgba(239, 68, 68, 0.2);
-        border-left: 4px solid #EF4444;
-        padding: 16px;
-        border-radius: 10px;
-        margin-bottom: 12px;
-    }
-    .gap-box-optimize {
-        background: rgba(212, 175, 55, 0.04);
-        border: 1px solid rgba(212, 175, 55, 0.2);
-        border-left: 4px solid #D4AF37;
-        padding: 16px;
-        border-radius: 10px;
-        margin-bottom: 12px;
-    }
-    .roadmap-card {
-        background: #0D1612;
-        border: 1px solid rgba(212, 175, 55, 0.15);
-        padding: 20px;
-        border-radius: 12px;
-        margin-bottom: 10px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
-    .yt-link {
-        color: #D4AF37 !important;
-        text-decoration: none;
-        font-weight: 600;
-        font-size: 0.85rem;
-        display: inline-flex;
-        align-items: center;
-        margin-top: 12px;
-        transition: color 0.2s ease;
-    }
-    .yt-link:hover {
-        color: #F3E5AB !important;
-        text-decoration: underline !important;
-    }
-    </style>
-    """, unsafe_allow_html=True)
 
 @st.cache_resource
 def load_nlp_models():
@@ -335,11 +117,10 @@ def create_pdf_report(percentage, gaps, summary):
     pdf.add_page()
     pdf.set_font("Arial", 'B', 16)
     pdf.cell(200, 10, "CareerAI Architecture Analytics Report", ln=True, align='C')
-    pdf.set_font("Arial", 'B', 12)
-    pdf.cell(200, 10, f"Match Framework Core Index: {percentage}%", ln=True, align='C')
+    safe_summary = summary.encode('ascii', 'ignore').decode('ascii')
     pdf.ln(10)
     pdf.set_font("Arial", '', 11)
-    pdf.multi_cell(0, 10, f"Executive Analytical Context:\n{summary}")
+    pdf.multi_cell(0, 10, f"Executive Analytical Context:\n{safe_summary}")
     return pdf.output(dest='S').encode('latin-1')
 
 # Initialize Session States
@@ -353,11 +134,78 @@ if 'resume_suggestions' not in st.session_state: st.session_state.resume_suggest
 if 'matched_skills' not in st.session_state: st.session_state.matched_skills = []
 if 'weighted_skill_score' not in st.session_state: st.session_state.weighted_skill_score = 0
 
-# --- 4. SIDEBAR NAVIGATION & NATIVE DEVELOPER CARD ---
+# --- 4. SIDEBAR NAVIGATION & BACKGROUND ENGINE ---
 st.sidebar.title("🌑 CareerAI Platform v1.2")
 page = st.sidebar.radio("Systems Diagnostic Hub:", ["🔍 Predictive Career Mapping", "🎯 Precision Profile Matching"])
 
-st.sidebar.divider()
+WHITE_BG = "https://github.com/KeshavaAditi04/CareerAI-Intelligence-System/raw/refs/heads/main/ChatGPT%20Image%20Jul%207,%202026,%2002_42_59%20AM.png"
+GREEN_BG = "https://github.com/KeshavaAditi04/CareerAI-Intelligence-System/raw/refs/heads/main/ChatGPT%20Image%20Jul%207,%202026,%2002_46_38%20AM.png"
+
+bg_url = GREEN_BG if page == "🔍 Predictive Career Mapping" else WHITE_BG
+
+if page == "🎯 Precision Profile Matching":
+    text_color = "#0F172A"       
+    label_color = "#1E293B"      
+    header_color = "#8B0000"     
+    card_bg = "rgba(255, 255, 255, 0.75)" 
+    card_border = "rgba(15, 23, 42, 0.15)"
+else:
+    text_color = "#F8FAFC"       
+    label_color = "#F8FAFC"
+    header_color = "#D4AF37"     
+    card_bg = "rgba(13, 22, 18, 0.8)" 
+    card_border = "rgba(212, 175, 55, 0.2)"
+
+css_template = """
+    <style>
+    [data-testid="stAppViewContainer"], 
+    [data-testid="stHeader"], 
+    .main, 
+    .stApp,
+    [data-testid="stAppViewBlockContainer"] {
+        background-image: url("VAR_BG_URL") !important;
+        background-size: cover !important;
+        background-position: center !important;
+        background-attachment: fixed !important;
+        animation: none !important;
+    }
+
+    [data-testid="stWidgetLabel"] p, label, p, span {
+        color: VAR_LABEL_COLOR !important;
+    }
+    
+    .stMarkdown p {
+        color: VAR_TEXT_COLOR !important;
+    }
+
+    h1, h2, h3, .stSubheader {
+        color: VAR_HEADER_COLOR !important;
+        font-weight: 700;
+    }
+
+    [data-testid="stForm"], .stAlert, .gap-box-critical, .gap-box-optimize, .roadmap-card {
+        background-color: VAR_CARD_BG !important;
+        border: 1px solid VAR_CARD_BORDER !important;
+        backdrop-filter: blur(12px) !important;
+        -webkit-backdrop-filter: blur(12px) !important;
+    }
+
+    [data-testid="stSidebar"], [data-testid="stSidebar"] > div {
+        background-color: #050807 !important; 
+        border-right: 1px solid rgba(212, 175, 55, 0.15) !important;
+    }
+    </style>
+"""
+
+custom_css = (css_template
+              .replace("VAR_BG_URL", bg_url)
+              .replace("VAR_LABEL_COLOR", label_color)
+              .replace("VAR_TEXT_COLOR", text_color)
+              .replace("VAR_HEADER_COLOR", header_color)
+              .replace("VAR_CARD_BG", card_bg)
+              .replace("VAR_CARD_BORDER", card_border))
+
+st.markdown(custom_css, unsafe_allow_html=True)
 
 with st.sidebar.container():
     st.caption("⚡ SYSTEM DEVELOPER")
