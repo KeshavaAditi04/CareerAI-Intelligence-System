@@ -136,8 +136,6 @@ if 'weighted_skill_score' not in st.session_state: st.session_state.weighted_ski
 
 # --- 4. SIDEBAR NAVIGATION & BACKGROUND ENGINE ---
 st.sidebar.title("🌑 CareerAI Platform v1.2")
-
-# 1. Updated page names to be specific and intuitive for students
 page = st.sidebar.radio("Navigate System:", ["🔍 Tech Career Pathway Predictor", "🎯 Precision Profile Matching"])
 
 WHITE_BG = "https://github.com/KeshavaAditi04/CareerAI-Intelligence-System/raw/refs/heads/main/ChatGPT%20Image%20Jul%207,%202026,%2002_42_59%20AM.png"
@@ -145,22 +143,23 @@ GREEN_BG = "https://github.com/KeshavaAditi04/CareerAI-Intelligence-System/raw/r
 
 bg_url = GREEN_BG if page == "🔍 Tech Career Pathway Predictor" else WHITE_BG
 
-# 2. Fully optimized text coloring for dark and light backgrounds
+# Assigning strict high-contrast font colors for each page context
 if page == "🎯 Precision Profile Matching":
-    text_color = "#1E293B"       # Clear dark charcoal font for your white theme
-    label_color = "#334155"      # Smooth dark gray for form text labels
-    header_color = "#8B0000"     # Deep burgundy accent for headers
+    text_color = "#1E293B"       # Crisp dark slate text for the white background page
+    label_color = "#334155"      # Dark gray for input field labels
+    header_color = "#991B1B"     # Strong burgundy for prominent titles
     card_bg = "rgba(255, 255, 255, 0.85)" 
     card_border = "rgba(30, 41, 59, 0.15)"
 else:
-    text_color = "#F8FAFC"       # Clean crisp white font for your emerald theme
-    label_color = "#E2E8F0"      # Light silver gray for widgets
-    header_color = "#D4AF37"     # Royal gold title accent
-    card_bg = "rgba(13, 22, 18, 0.8)" 
-    card_border = "rgba(212, 175, 55, 0.2)"
+    text_color = "#FFFFFF"       # Bright white text for the green background page
+    label_color = "#F1F5F9"      # Light silver-white for input field labels
+    header_color = "#F59E0B"     # Golden amber for prominent titles
+    card_bg = "rgba(13, 22, 18, 0.85)" 
+    card_border = "rgba(245, 158, 11, 0.3)"
 
 css_template = """
     <style>
+    /* Keep your backgrounds exactly as they are */
     [data-testid="stAppViewContainer"], 
     [data-testid="stHeader"], 
     .main, 
@@ -173,20 +172,24 @@ css_template = """
         animation: none !important;
     }
 
-    /* Target input titles and raw paragraph texts cleanly */
-    [data-testid="stWidgetLabel"] p, label, span {
-        color: VAR_LABEL_COLOR !important;
-    }
-    
-    .stMarkdown p, div {
+    /* Target main body text explicitly */
+    .stMarkdown p, .stMarkdown li, p {
         color: VAR_TEXT_COLOR !important;
     }
-
-    h1, h2, h3, .stSubheader {
-        color: VAR_HEADER_COLOR !important;
-        font-weight: 700;
+    
+    /* Target form field labels explicitly */
+    [data-testid="stWidgetLabel"] p, label {
+        color: VAR_LABEL_COLOR !important;
+        font-weight: 600 !important;
     }
 
+    /* Target titles explicitly */
+    h1, h2, h3, .stSubheader, [data-testid="stHeader"] h1 {
+        color: VAR_HEADER_COLOR !important;
+        font-weight: 800 !important;
+    }
+
+    /* Style container elements and input boxes */
     [data-testid="stForm"], .stAlert, .gap-box-critical, .gap-box-optimize, .roadmap-card {
         background-color: VAR_CARD_BG !important;
         border: 1px solid VAR_CARD_BORDER !important;
@@ -194,17 +197,30 @@ css_template = """
         -webkit-backdrop-filter: blur(12px) !important;
     }
 
-    [data-testid="stSidebar"], [data-testid="stSidebar"] > div {
+    /* Force the Sidebar text to always stay bright (since the sidebar is always black) */
+    [data-testid="stSidebar"] {
         background-color: #050807 !important; 
-        border-right: 1px solid rgba(212, 175, 55, 0.15) !important;
+        border-right: 1px solid rgba(245, 158, 11, 0.15) !important;
+    }
+    
+    [data-testid="stSidebar"] .stMarkdown p, 
+    [data-testid="stSidebar"] label, 
+    [data-testid="stSidebar"] span,
+    [data-testid="stSidebar"] h1,
+    [data-testid="stSidebar"] h2 {
+        color: #FFFFFF !important;
+    }
+    
+    [data-testid="stSidebar"] h3 {
+        color: #F59E0B !important; /* Forces your developer name to pop in Gold */
     }
     </style>
 """
 
 custom_css = (css_template
               .replace("VAR_BG_URL", bg_url)
-              .replace("VAR_LABEL_COLOR", label_color)
               .replace("VAR_TEXT_COLOR", text_color)
+              .replace("VAR_LABEL_COLOR", label_color)
               .replace("VAR_HEADER_COLOR", header_color)
               .replace("VAR_CARD_BG", card_bg)
               .replace("VAR_CARD_BORDER", card_border))
