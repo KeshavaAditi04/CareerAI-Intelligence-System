@@ -58,7 +58,7 @@ st.markdown("""
     /* Sidebar text colors */
     [data-testid="stSidebar"] .stMarkdown p, 
     [data-testid="stSidebar"] span {
-        color: #A3B8CC !important; 
+        color: #A3B8CC !important;
         # --- 4. SIDEBAR NAVIGATION & BACKGROUND ENGINE ---
 st.sidebar.title("🌑 CareerAI Platform v1.2")
 page = st.sidebar.radio("Systems Diagnostic Hub:", ["🔍 Predictive Career Mapping", "🎯 Precision Profile Matching"])
@@ -72,67 +72,75 @@ bg_url = GREEN_BG if page == "🔍 Predictive Career Mapping" else WHITE_BG
 
 # Adaptive text color mapping for accessibility and readability
 if page == "🎯 Precision Profile Matching":
-    # Styling tweaks to ensure crisp readability on your light/white theme
-    text_color = "#0F172A"       # Deep charcoal/slate for readable paragraphs
-    label_color = "#1E293B"      # Darker tone for input labels
-    header_color = "#8B0000"     # Crimson accent for titles
-    card_bg = "rgba(255, 255, 255, 0.75)" # Clean frosted white cards
+    text_color = "#0F172A"       
+    label_color = "#1E293B"      
+    header_color = "#8B0000"     
+    card_bg = "rgba(255, 255, 255, 0.75)" 
     card_border = "rgba(15, 23, 42, 0.15)"
 else:
-    # Your original dark-mode cyberpunk configurations for the green theme
-    text_color = "#F8FAFC"       # Bright white text
+    text_color = "#F8FAFC"       
     label_color = "#F8FAFC"
-    header_color = "#D4AF37"     # Royal gold title accent
-    card_bg = "rgba(13, 22, 18, 0.8)" # Dark emerald glassmorphism wells
+    header_color = "#D4AF37"     
+    card_bg = "rgba(13, 22, 18, 0.8)" 
     card_border = "rgba(212, 175, 55, 0.2)"
 
-st.markdown(f"""
+# 1. Write the raw CSS string cleanly without an 'f' prefix
+css_template = """
     <style>
-    /* 1. CONTAINER: Dynamic Canvas Switching */
+    /* MAIN CANVAS SWITCHING */
     [data-testid="stAppViewContainer"], 
     [data-testid="stHeader"], 
     .main, 
     .stApp,
-    [data-testid="stAppViewBlockContainer"] {{
-        background-image: url("{bg_url}") !important;
+    [data-testid="stAppViewBlockContainer"] {
+        background-image: url("VAR_BG_URL") !important;
         background-size: cover !important;
         background-position: center !important;
         background-attachment: fixed !important;
-        animation: none !important; /* Disables the old layout scan gradient lines */
-    }}
+        animation: none !important;
+    }
 
-    /* 2. DYNAMIC TEXT & LABELS BASED ON THEME */
-    [data-testid="stWidgetLabel"] p, label, p, span {{
-        color: {label_color} !important;
-    }}
+    /* DYNAMIC TEXT & LABELS BASED ON THEME */
+    [data-testid="stWidgetLabel"] p, label, p, span {
+        color: VAR_LABEL_COLOR !important;
+    }
     
-    .stMarkdown p {{
-        color: {text_color} !important;
-    }}
+    .stMarkdown p {
+        color: VAR_TEXT_COLOR !important;
+    }
 
-    h1, h2, h3, .stSubheader {{
-        color: {header_color} !important;
+    h1, h2, h3, .stSubheader {
+        color: VAR_HEADER_COLOR !important;
         font-weight: 700;
-    }}
+    }
 
-    /* 3. DYNAMIC CARDS / BOXES */
-    [data-testid="stForm"], .stAlert, .gap-box-critical, .gap-box-optimize, .roadmap-card {{
-        background-color: {card_bg} !important;
-        border: 1px solid {card_border} !important;
+    /* DYNAMIC CARDS & BOXES */
+    [data-testid="stForm"], .stAlert, .gap-box-critical, .gap-box-optimize, .roadmap-card {
+        background-color: VAR_CARD_BG !important;
+        border: 1px solid VAR_CARD_BORDER !important;
         backdrop-filter: blur(12px) !important;
         -webkit-backdrop-filter: blur(12px) !important;
-    }}
+    }
 
-    /* 4. SIDEBAR: Matte Black Velvet for High Contrast */
-    [data-testid="stSidebar"], [data-testid="stSidebar"] > div {{
+    /* SIDEBAR: High Contrast Matte Dark */
+    [data-testid="stSidebar"], [data-testid="stSidebar"] > div {
         background-color: #050807 !important; 
         border-right: 1px solid rgba(212, 175, 55, 0.15) !important;
-    }}
-    
-    /* Keep your existing button properties intact here... */
+    }
     </style>
-    """, unsafe_allow_html=True)
+"""
 
+# 2. Safely swap out placeholders for your custom colors
+custom_css = (css_template
+              .replace("VAR_BG_URL", bg_url)
+              .replace("VAR_LABEL_COLOR", label_color)
+              .replace("VAR_TEXT_COLOR", text_color)
+              .replace("VAR_HEADER_COLOR", header_color)
+              .replace("VAR_CARD_BG", card_bg)
+              .replace("VAR_CARD_BORDER", card_border))
+
+# 3. Inject into Streamlit
+st.markdown(custom_css, unsafe_allow_html=True)
 
     /* 5. INPUT & UPLOAD FIELDS */
     [data-testid="stFileUploadDropzone"], input, textarea {
