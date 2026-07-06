@@ -126,6 +126,7 @@ def create_pdf_report(percentage, gaps, summary):
 def reset_analysis():
     st.session_state.analyzed = False
     
+    # Completely wipes file box caches and text buffers
     if "p1_uploader" in st.session_state:
         del st.session_state["p1_uploader"]
     if "p2_uploader" in st.session_state:
@@ -155,16 +156,16 @@ GREEN_BG = "https://github.com/KeshavaAditi04/CareerAI-Intelligence-System/raw/r
 
 bg_url = GREEN_BG if page == "🔍 Tech Career Pathway Predictor" else WHITE_BG
 
-# BOTH backgrounds are light/reflective, so we use rich dark colors on BOTH panels now!
-text_color = "#1E293B"       # Dark Slate gray for crisp text readability
-label_color = "#0F172A"      # Deep midnight black for widgets/labels
+# Enforce crisp charcoal styling on both pages to contrast against the light background panels
+text_color = "#1E293B"       
+label_color = "#0F172A"      
 card_bg = "rgba(255, 255, 255, 0.85)" 
 card_border = "rgba(15, 23, 42, 0.15)"
 
 if page == "🎯 Precision Profile Matching":
-    header_color = "#991B1B"     # Strong burgundy for Page 2
+    header_color = "#991B1B"     
 else:
-    header_color = "#1E3A8A"     # Deep royal navy for Page 1 title to pop against the green/gold hues
+    header_color = "#1E3A8A"     
 
 css_template = """
     <style>
@@ -181,24 +182,24 @@ css_template = """
         animation: none !important;
     }
 
-    /* FORCE ALL TEXT ELEMENTS, MARKDOWN, AND PARAGRAPHS TO DARK SLATE */
+    /* FORCE TEXT ELEMENTS TO DARK RED/SLATE INSTEAD OF WASHED OUT WHITE */
     .stMarkdown p, .stMarkdown li, div, p, span, .stText p {
         color: VAR_TEXT_COLOR !important;
     }
     
-    /* TARGET STREAMLIT SPECIFIC WIDGET LABELS AND DROPAWAY TEXT */
+    /* TARGET DROPZONE AND LABEL PROMPT LAYERS */
     [data-testid="stWidgetLabel"] p, label, [data-testid="stFileUploadDropzone"] div {
         color: VAR_LABEL_COLOR !important;
         font-weight: 700 !important;
     }
 
-    /* TARGET HEADINGS EXPLICITLY WITH HIGHER SPECIFICITY CRITERIA */
+    /* TARGET INTERFACE HEADINGS */
     h1, h2, h3, .stSubheader, [data-testid="stHeader"] h1, .stMarkdown h1, .stMarkdown h2, .stMarkdown h3, [data-testid="stHeadingWithLink"] h1 {
         color: VAR_HEADER_COLOR !important;
         font-weight: 900 !important;
     }
 
-    /* CARD CONTAINER BACKGROUND RENDERING */
+    /* CARD WRAPPERS */
     [data-testid="stForm"], .stAlert, .gap-box-critical, .gap-box-optimize, .roadmap-card, [data-testid="stFileUploadDropzone"] {
         background-color: VAR_CARD_BG !important;
         border: 2px solid VAR_CARD_BORDER !important;
@@ -206,25 +207,17 @@ css_template = """
         -webkit-backdrop-filter: blur(12px) !important;
     }
 
-    /* =========================================================================
-       MASTER SIDEBAR TEXT CONTRAST OVERRIDES (FIXES DARK TEXT ON BLACK CANVAS)
-       ========================================================================= */
+    /* SIDEBAR ELEMENT FIXES */
     [data-testid="stSidebar"] {
         background-color: #050807 !important; 
         border-right: 1px solid rgba(245, 158, 11, 0.15) !important;
     }
-    
-    /* Force sidebar title to stay bright */
     [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h1 span {
         color: #FFFFFF !important;
     }
-    
-    /* Force 'Aditi Das' subheader to remain Golden */
     [data-testid="stSidebar"] h3, [data-testid="stSidebar"] h3 span {
         color: #F59E0B !important;
     }
-
-    /* Force all general text elements inside the sidebar container to be white */
     [data-testid="stSidebar"] p,
     [data-testid="stSidebar"] span,
     [data-testid="stSidebar"] label,
@@ -233,15 +226,11 @@ css_template = """
     [data-testid="stSidebar"] [data-testid="stWidgetLabel"] p {
         color: #F8FAFC !important;
     }
-
-    /* FIXES THE RADIO BUTTON OPTION TEXT COLOR */
     [data-testid="stSidebar"] [data-testid="stWidgetLabel"] + div label span,
     [data-testid="stSidebar"] [data-testid="stRadio"] div p {
         color: #FFFFFF !important;
         font-weight: 600 !important;
     }
-
-    /* FIXES THE CODE BLOCK TEXT COLOR (Changes invisible white font to rich black on the white box) */
     [data-testid="stSidebar"] code {
         color: #1E293B !important;
         font-weight: 700 !important;
@@ -315,17 +304,26 @@ if page == "🔍 Tech Career Pathway Predictor":
                 
                 st.success(f"💥 Top Recommended Track: **{df.iloc[0]['Target Domain']}**")
                 
-                fig_bar = px.bar(df, x='Match Strength (%)', y='Target Domain', orientation='h', 
-                                 color='Match Strength (%)', color_continuous_scale='Reds', text='Match Strength (%)')
+                # --- THE BAR CHART (Fixed & Un-nested) ---
+                fig_bar = px.bar(
+                    df, 
+                    x='Match Strength (%)', 
+                    y='Target Domain', 
+                    orientation='h', 
+                    color='Match Strength (%)', 
+                    color_continuous_scale='Reds', 
+                    text='Match Strength (%)'
+                )
                 
                 fig_bar.update_layout(
                     paper_bgcolor="rgba(0,0,0,0)", 
-                    font_color="#1E293B", # Dark font for the data visualization text labels
+                    font_color="#1E293B", 
                     plot_bgcolor="rgba(0,0,0,0)", 
                     height=450
                 )
                 st.plotly_chart(fig_bar, use_container_width=True)
                 
+                # --- UPLOAD NEW RESUME BUTTON (Fixed) ---
                 st.divider()
                 if st.button("🔄 Upload New Resume", use_container_width=True):
                     reset_analysis()
@@ -385,7 +383,7 @@ else:
         st.subheader("📊 Alignment Metrics Hub")
         
         col1, col2, col3 = st.columns(3)
-        chart_text_color = "#1E293B" # Forced charcoal color for layout gauges text readability
+        chart_text_color = "#1E293B" 
         
         def create_gauge(title, score, bar_color):
             fig = go.Figure(go.Indicator(
@@ -432,6 +430,8 @@ else:
                     st.markdown(f"[Find Study Guides ↗]({get_youtube_link(gap)})")
         else:
             st.success("No missing core technical competency gaps recognized.")
+
+        # --- MULTI-LINE SAFE DOWNLOAD BUTTON (No Syntax Errors) ---
         pdf_bytes = create_pdf_report(st.session_state.percentage, st.session_state.skill_gaps, st.session_state.narrative)
         st.download_button(
             label="📥 Download Summary Report (PDF)", 
@@ -439,4 +439,8 @@ else:
             file_name="CareerAI_Analysis.pdf", 
             mime="application/pdf", 
             use_container_width=True
-)
+        )
+        
+        st.divider()
+        if st.button("🔄 Upload a Different Profile", use_container_width=True):
+            reset_analysis()
