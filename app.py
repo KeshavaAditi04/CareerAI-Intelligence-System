@@ -125,8 +125,15 @@ def create_pdf_report(percentage, gaps, summary):
 
 def reset_analysis():
     st.session_state.analyzed = False
-    if "resume_file_uploader" in st.session_state:
-        del st.session_state["resume_file_uploader"]
+    
+    # Explicitly delete the file uploaders and text box from memory
+    if "p1_uploader" in st.session_state:
+        del st.session_state["p1_uploader"]
+    if "p2_uploader" in st.session_state:
+        del st.session_state["p2_uploader"]
+    if "job_requirements_text" in st.session_state:
+        del st.session_state["job_requirements_text"]
+        
     st.rerun()
 
 # Initialize Session States
@@ -261,7 +268,7 @@ if page == "🔍 Tech Career Pathway Predictor":
         "Cybersecurity": "network security, ethical hacking, Linux, SIEM, risk analysis."
     }
 
-    res_file = st.file_uploader("Upload Academic Profile / Resume (PDF)", type=["pdf"], key="resume_file_uploader")
+    res_file = st.file_uploader("Upload Academic Profile / Resume (PDF)", type=["pdf"], key="p1_uploader")
     
     if res_file:
         with st.status("Analyzing Profile Skill Sets...", expanded=True) as status:
@@ -310,9 +317,9 @@ else:
     st.title("🎯 Precision Profile Matching")
     st.write("Analyze how well your current resume aligns with a targeted Computer Science job specification.")
 
-    with st.form("alignment_matrix_form"):
-        res_file = st.file_uploader("Upload Academic Resume (PDF)", type=["pdf"])
-        job_desc = st.text_area("Target Job Profile Requirements / Description")
+        with st.form("alignment_matrix_form"):
+        res_file = st.file_uploader("Upload Academic Resume (PDF)", type=["pdf"], key="p2_uploader")
+        job_desc = st.text_area("Target Job Profile Requirements / Description", key="job_requirements_text")
         submit_btn = st.form_submit_button("Run Alignment Audit")
 
     if submit_btn and res_file and job_desc:
