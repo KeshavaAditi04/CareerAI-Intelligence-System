@@ -126,7 +126,6 @@ def create_pdf_report(percentage, gaps, summary):
 def reset_analysis():
     st.session_state.analyzed = False
     
-    # Completely wipes file box caches and text buffers
     if "p1_uploader" in st.session_state:
         del st.session_state["p1_uploader"]
     if "p2_uploader" in st.session_state:
@@ -153,7 +152,7 @@ page = st.sidebar.radio("Navigate System:", ["🔍 Tech Career Pathway Predictor
 
 st.sidebar.divider()
 
-# --- NEW CLEAN CUSTOM DEVELOPER & ENGINE INFRASTRUCTURE ---
+# --- THE CLEAN MARKDOWN DEVELOPER SECTION (No more un-themeable code box!) ---
 st.sidebar.markdown("### 👩🏻‍💻 Developer")
 st.sidebar.write("**Aditi Das**")
 st.sidebar.caption("BCA Final Year Project | 2026")
@@ -167,7 +166,100 @@ st.sidebar.write("• ATS Evaluation")
 st.sidebar.write("• PDF Report Generation")
 
 st.sidebar.divider()
+
+# --- BACKGROUND IMAGE RESOLUTION MATRIX ---
+WHITE_BG = "https://github.com/KeshavaAditi04/CareerAI-Intelligence-System/raw/refs/heads/main/ChatGPT%20Image%20Jul%207,%202026,%2002_42_59%20AM.png"
+GREEN_BG = "https://github.com/KeshavaAditi04/CareerAI-Intelligence-System/raw/refs/heads/main/ChatGPT%20Image%20Jul%207,%202026,%2002_46_38%20AM.png"
+
+bg_url = GREEN_BG if page == "🔍 Tech Career Pathway Predictor" else WHITE_BG
+
+# Setup theme contrast levels
+text_color = "#1E293B"       
+label_color = "#0F172A"      
+card_bg = "rgba(255, 255, 255, 0.85)" 
+card_border = "rgba(15, 23, 42, 0.15)"
+
+if page == "🎯 Precision Profile Matching":
+    header_color = "#991B1B"     
+else:
+    header_color = "#1E3A8A"     
+
+css_template = """
+    <style>
+    /* MAIN INTERFACE BACKGROUND FRAMEWORKS */
+    [data-testid="stAppViewContainer"], 
+    [data-testid="stHeader"], 
+    .main, 
+    .stApp,
+    [data-testid="stAppViewBlockContainer"] {
+        background-image: url("VAR_BG_URL") !important;
+        background-size: cover !important;
+        background-position: center !important;
+        background-attachment: fixed !important;
+        display: block !important;
+    }
+
+    /* FORCE TEXT ELEMENTS TO DARK SLATE INSTEAD OF WASHED OUT WHITE */
+    .stMarkdown p, .stMarkdown li, div, p, span, .stText p {
+        color: VAR_TEXT_COLOR !important;
+    }
     
+    /* TARGET DROPZONE AND LABEL PROMPT LAYERS */
+    [data-testid="stWidgetLabel"] p, label, [data-testid="stFileUploadDropzone"] div {
+        color: VAR_LABEL_COLOR !important;
+        font-weight: 700 !important;
+    }
+
+    /* TARGET INTERFACE HEADINGS */
+    h1, h2, h3, .stSubheader, [data-testid="stHeader"] h1, .stMarkdown h1, .stMarkdown h2, .stMarkdown h3, [data-testid="stHeadingWithLink"] h1 {
+        color: VAR_HEADER_COLOR !important;
+        font-weight: 900 !important;
+    }
+
+    /* CARD WRAPPERS */
+    [data-testid="stForm"], .stAlert, .gap-box-critical, .gap-box-optimize, .roadmap-card, [data-testid="stFileUploadDropzone"] {
+        background-color: VAR_CARD_BG !important;
+        border: 2px solid VAR_CARD_BORDER !important;
+        backdrop-filter: blur(12px) !important;
+        -webkit-backdrop-filter: blur(12px) !important;
+    }
+
+    /* SIDEBAR ELEMENT FIXES */
+    [data-testid="stSidebar"] {
+        background-color: #050807 !important; 
+        border-right: 1px solid rgba(245, 158, 11, 0.15) !important;
+    }
+    [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h1 span {
+        color: #FFFFFF !important;
+    }
+    [data-testid="stSidebar"] h3, [data-testid="stSidebar"] h3 span {
+        color: #F59E0B !important;
+    }
+    [data-testid="stSidebar"] p,
+    [data-testid="stSidebar"] span,
+    [data-testid="stSidebar"] label,
+    [data-testid="stSidebar"] caption,
+    [data-testid="stSidebar"] .stMarkdown p,
+    [data-testid="stSidebar"] [data-testid="stWidgetLabel"] p {
+        color: #F8FAFC !important;
+    }
+    [data-testid="stSidebar"] [data-testid="stWidgetLabel"] + div label span,
+    [data-testid="stSidebar"] [data-testid="stRadio"] div p {
+        color: #FFFFFF !important;
+        font-weight: 600 !important;
+    }
+    </style>
+"""
+
+custom_css = (css_template
+              .replace("VAR_BG_URL", bg_url)
+              .replace("VAR_TEXT_COLOR", text_color)
+              .replace("VAR_LABEL_COLOR", label_color)
+              .replace("VAR_HEADER_COLOR", header_color)
+              .replace("VAR_CARD_BG", card_bg)
+              .replace("VAR_CARD_BORDER", card_border))
+
+st.markdown(custom_css, unsafe_allow_html=True)
 
 # --- 5. PAGE 1: TECH CAREER PATHWAY PREDICTOR ---
 if page == "🔍 Tech Career Pathway Predictor":
@@ -215,7 +307,6 @@ if page == "🔍 Tech Career Pathway Predictor":
                 
                 st.success(f"💥 Top Recommended Track: **{df.iloc[0]['Target Domain']}**")
                 
-                # --- THE BAR CHART (Fixed & Un-nested) ---
                 fig_bar = px.bar(
                     df, 
                     x='Match Strength (%)', 
@@ -234,7 +325,6 @@ if page == "🔍 Tech Career Pathway Predictor":
                 )
                 st.plotly_chart(fig_bar, use_container_width=True)
                 
-                # --- UPLOAD NEW RESUME BUTTON (Fixed) ---
                 st.divider()
                 if st.button("🔄 Upload New Resume", use_container_width=True):
                     reset_analysis()
@@ -342,7 +432,6 @@ else:
         else:
             st.success("No missing core technical competency gaps recognized.")
 
-        # --- MULTI-LINE SAFE DOWNLOAD BUTTON (No Syntax Errors) ---
         pdf_bytes = create_pdf_report(st.session_state.percentage, st.session_state.skill_gaps, st.session_state.narrative)
         st.download_button(
             label="📥 Download Summary Report (PDF)", 
