@@ -11,7 +11,7 @@ from collections import Counter
 import numpy as np
 
 # --- 1. UI CONFIG ---
-st.set_page_config(page_title="CareerAI Intelligence System", layout="wide")
+st.set_page_config(page_title="CareerAI Computer Science Career Assistant", layout="wide")
 
 @st.cache_resource
 def load_nlp_models():
@@ -116,11 +116,11 @@ def create_pdf_report(percentage, gaps, summary):
     pdf = FPDF()
     pdf.add_page()
     pdf.set_font("Arial", 'B', 16)
-    pdf.cell(200, 10, "CareerAI Architecture Analytics Report", ln=True, align='C')
+    pdf.cell(200, 10, "CareerAI Analytics Summary Report", ln=True, align='C')
     safe_summary = summary.encode('ascii', 'ignore').decode('ascii')
     pdf.ln(10)
     pdf.set_font("Arial", '', 11)
-    pdf.multi_cell(0, 10, f"Executive Analytical Context:\n{safe_summary}")
+    pdf.multi_cell(0, 10, f"Analysis Summary:\n{safe_summary}")
     return pdf.output(dest='S').encode('latin-1')
 
 def reset_analysis():
@@ -146,13 +146,16 @@ if 'resume_suggestions' not in st.session_state: st.session_state.resume_suggest
 if 'matched_skills' not in st.session_state: st.session_state.matched_skills = []
 if 'weighted_skill_score' not in st.session_state: st.session_state.weighted_skill_score = 0
 
-# --- 4. SIDEBAR NAVIGATION & BACKGROUND ENGINE ---
-st.sidebar.title("🌑 CareerAI Platform v1.2")
-page = st.sidebar.radio("Navigate System:", ["🔍 Tech Career Pathway Predictor", "🎯 Precision Profile Matching"], key="navigation_radio")
+# --- 4. SIDEBAR NAVIGATION ("Choose a tool") ---
+st.sidebar.title("🌑 Choose a tool")
+page = st.sidebar.radio(
+    "Select Assistant Mode:", 
+    ["💻 CS Career Explorer", "📄 Resume Match Analyzer"], 
+    key="navigation_radio"
+)
 
 st.sidebar.divider()
 
-# --- THE CLEAN MARKDOWN DEVELOPER SECTION (No more un-themeable code box!) ---
 st.sidebar.markdown("### 👩🏻‍💻 Developer")
 st.sidebar.write("**Aditi Das**")
 st.sidebar.caption("BCA Final Year Project | 2026")
@@ -167,26 +170,24 @@ st.sidebar.write("• PDF Report Generation")
 
 st.sidebar.divider()
 
-# --- BACKGROUND IMAGE RESOLUTION MATRIX ---
+# --- BACKGROUND IMAGE INJECTION ENGINE ---
 WHITE_BG = "https://github.com/KeshavaAditi04/CareerAI-Intelligence-System/raw/refs/heads/main/ChatGPT%20Image%20Jul%207,%202026,%2002_42_59%20AM.png"
 GREEN_BG = "https://github.com/KeshavaAditi04/CareerAI-Intelligence-System/raw/refs/heads/main/ChatGPT%20Image%20Jul%207,%202026,%2002_46_38%20AM.png"
 
-bg_url = GREEN_BG if page == "🔍 Tech Career Pathway Predictor" else WHITE_BG
+bg_url = GREEN_BG if page == "💻 CS Career Explorer" else WHITE_BG
 
-# Setup theme contrast levels
 text_color = "#1E293B"       
 label_color = "#0F172A"      
 card_bg = "rgba(255, 255, 255, 0.85)" 
 card_border = "rgba(15, 23, 42, 0.15)"
 
-if page == "🎯 Precision Profile Matching":
+if page == "📄 Resume Match Analyzer":
     header_color = "#991B1B"     
 else:
     header_color = "#1E3A8A"     
 
 css_template = """
     <style>
-    /* MAIN INTERFACE BACKGROUND FRAMEWORKS */
     [data-testid="stAppViewContainer"], 
     [data-testid="stHeader"], 
     .main, 
@@ -199,24 +200,20 @@ css_template = """
         display: block !important;
     }
 
-    /* FORCE TEXT ELEMENTS TO DARK SLATE INSTEAD OF WASHED OUT WHITE */
     .stMarkdown p, .stMarkdown li, div, p, span, .stText p {
         color: VAR_TEXT_COLOR !important;
     }
     
-    /* TARGET DROPZONE AND LABEL PROMPT LAYERS */
     [data-testid="stWidgetLabel"] p, label, [data-testid="stFileUploadDropzone"] div {
         color: VAR_LABEL_COLOR !important;
         font-weight: 700 !important;
     }
 
-    /* TARGET INTERFACE HEADINGS */
     h1, h2, h3, .stSubheader, [data-testid="stHeader"] h1, .stMarkdown h1, .stMarkdown h2, .stMarkdown h3, [data-testid="stHeadingWithLink"] h1 {
         color: VAR_HEADER_COLOR !important;
         font-weight: 900 !important;
     }
 
-    /* CARD WRAPPERS */
     [data-testid="stForm"], .stAlert, .gap-box-critical, .gap-box-optimize, .roadmap-card, [data-testid="stFileUploadDropzone"] {
         background-color: VAR_CARD_BG !important;
         border: 2px solid VAR_CARD_BORDER !important;
@@ -224,7 +221,6 @@ css_template = """
         -webkit-backdrop-filter: blur(12px) !important;
     }
 
-    /* SIDEBAR ELEMENT FIXES */
     [data-testid="stSidebar"] {
         background-color: #050807 !important; 
         border-right: 1px solid rgba(245, 158, 11, 0.15) !important;
@@ -261,12 +257,11 @@ custom_css = (css_template
 
 st.markdown(custom_css, unsafe_allow_html=True)
 
-# --- 5. PAGE 1: TECH CAREER PATHWAY PREDICTOR ---
-if page == "🔍 Tech Career Pathway Predictor":
-    st.title("🔍 Tech Career Pathway Predictor")
-    
-    st.caption("⚠️ **System Scope Note:** This workspace evaluates profiles strictly optimized for Computer Science, Information Technology, and Software Engineering tracks.")
-    st.write("Upload your academic resume to identify which tech domain fits your skill patterns best.")
+# --- 5. PAGE 1: CS CAREER EXPLORER ---
+if page == "💻 CS Career Explorer":
+    st.title("CareerAI Computer Science Career Assistant")
+    st.write("### Scope: Optimized for Computer Science, IT, and Software Engineering pathways.")
+    st.write("Upload your resume to discover which technical career domain matches your skills best.")
     
     benchmarks = {
         "Data Analytics": "SQL, Python, Power BI, data visualization, and statistical modeling.",
@@ -279,11 +274,11 @@ if page == "🔍 Tech Career Pathway Predictor":
         "Cybersecurity": "network security, ethical hacking, Linux, SIEM, risk analysis."
     }
 
-    res_file = st.file_uploader("Upload Academic Profile / Resume (PDF)", type=["pdf"], key="p1_uploader")
+    res_file = st.file_uploader("Upload Resume (PDF)", type=["pdf"], key="p1_uploader")
     
     if res_file:
-        with st.status("Analyzing Profile Skill Sets...", expanded=True) as status:
-            st.write("Reading document layout...")
+        with st.status("Analyzing Resume...", expanded=True) as status:
+            st.write("Reading Resume...")
             resume_text = clean_text(extract_text(res_file.getvalue()))
             time.sleep(0.4)
             
@@ -291,11 +286,11 @@ if page == "🔍 Tech Career Pathway Predictor":
                 st.error("Error: Could not extract text content from the file.")
                 status.update(label="Analysis Failed", state="error")
             else:
-                st.write("Evaluating field match patterns...")
+                st.write("Checking Resume Format...")
                 res_vec = model.encode(resume_text, convert_to_tensor=True)
                 time.sleep(0.4)
                 
-                st.write("Calculating match values...")
+                st.write("Comparing Resume with Job Description...")
                 results = []
                 for role, desc in benchmarks.items():
                     bench_vec = model.encode(clean_text(desc), convert_to_tensor=True)
@@ -303,7 +298,7 @@ if page == "🔍 Tech Career Pathway Predictor":
                     results.append({"Target Domain": role, "Match Strength (%)": round(score * 100, 1)})
                 
                 df = pd.DataFrame(results).sort_values(by="Match Strength (%)", ascending=False)
-                status.update(label="Analysis Completed!", state="complete", expanded=False)
+                status.update(label="Analysis Complete!", state="complete", expanded=False)
                 
                 st.success(f"💥 Top Recommended Track: **{df.iloc[0]['Target Domain']}**")
                 
@@ -329,19 +324,20 @@ if page == "🔍 Tech Career Pathway Predictor":
                 if st.button("🔄 Upload New Resume", use_container_width=True):
                     reset_analysis()
 
-# --- 6. PAGE 2: PRECISION PROFILE MATCHING ---
+# --- 6. PAGE 2: RESUME MATCH ANALYZER ---
 else:
-    st.title("🎯 Precision Profile Matching")
-    st.write("Analyze how well your current resume aligns with a targeted Computer Science job specification.")
+    st.title("CareerAI Computer Science Career Assistant")
+    st.write("### Scope: Optimized for Computer Science, IT, and Software Engineering pathways.")
+    st.write("Analyze how well your current resume aligns with a targeted job specification.")
 
     with st.form("alignment_matrix_form"):
-        res_file = st.file_uploader("Upload Academic Resume (PDF)", type=["pdf"], key="p2_uploader")
-        job_desc = st.text_area("Target Job Profile Requirements / Description", key="job_requirements_text")
-        submit_btn = st.form_submit_button("Run Alignment Audit")
+        res_file = st.file_uploader("Upload Resume (PDF)", type=["pdf"], key="p2_uploader")
+        job_desc = st.text_area("Paste Job Description", key="job_requirements_text")
+        submit_btn = st.form_submit_button("Analyze Resume")
 
     if submit_btn and res_file and job_desc:
-        with st.status("Running Profile Alignment System...", expanded=True) as status:
-            st.write("Extracting structural data content...")
+        with st.status("Analyzing Resume...", expanded=True) as status:
+            st.write("Reading Resume...")
             raw_resume_text = extract_text(res_file.getvalue())
             resume_text = clean_text(raw_resume_text)
             job_clean = clean_text(job_desc)
@@ -349,9 +345,9 @@ else:
             
             if not resume_text.strip() or not job_clean.strip():
                 st.error("Incomplete execution data. Ensure both fields contain valid information.")
-                status.update(label="Audit Terminated", state="error")
+                status.update(label="Analysis Failed", state="error")
             else:
-                st.write("Mapping skill sets...")
+                st.write("Checking Resume Format...")
                 resume_words = get_keywords(resume_text)
                 job_words = get_keywords(job_clean)
                 
@@ -360,7 +356,7 @@ else:
                 gaps = list(all_requested_skills.difference(resume_words))
                 time.sleep(0.3)
                 
-                st.write("Processing context values...")
+                st.write("Comparing Resume with Job Description...")
                 res_vec = model.encode(resume_text, convert_to_tensor=True)
                 job_vec = model.encode(job_clean, convert_to_tensor=True)
                 match_percentage = round(util.cos_sim(res_vec, job_vec).item() * 100, 1)
@@ -376,12 +372,22 @@ else:
                 st.session_state.weighted_skill_score = calculate_weighted_score(matched_skills)
                 st.session_state.interview_probability = calculate_interview_probability(match_percentage, ats_score, matched_skills)
                 
-                st.session_state.narrative = f"The candidate profile shares a {match_percentage}% core similarity match with the job role requirements."
+                # Setup custom clear feedback string metrics instead of high dimensional text
+                if match_percentage < 50:
+                    st.session_state.narrative = "Your resume currently has limited alignment with the selected job description. Adding relevant technical skills and project experience can significantly improve your match score."
+                elif match_percentage < 75:
+                    st.session_state.narrative = "Your resume has a good foundation but can be improved by including more relevant technical keywords."
+                else:
+                    st.session_state.narrative = "Excellent! Your resume closely matches the selected job description."
+                    
                 st.session_state.analyzed = True
-                status.update(label="Alignment Complete!", state="complete", expanded=False)
+                status.update(label="Analysis Complete!", state="complete", expanded=False)
 
     if st.session_state.analyzed:
         st.subheader("📊 Alignment Metrics Hub")
+        
+        # Display the custom clear alignment feedback narrative directly above gauges
+        st.info(st.session_state.narrative)
         
         col1, col2, col3 = st.columns(3)
         chart_text_color = "#1E293B" 
