@@ -156,17 +156,23 @@ page = st.sidebar.radio(
 
 st.sidebar.divider()
 
-st.sidebar.markdown("### 👩🏻‍💻 Developer")
-st.sidebar.write("**Aditi Das**")
-st.sidebar.caption("BCA Final Year Project | 2026")
+# --- NEW PROFESSIONAL ABOUT SECTION ---
+st.sidebar.markdown("### 🎯 About CareerAI")
+st.sidebar.markdown("CareerAI helps Computer Science students:")
+st.sidebar.write("✔ Find suitable career paths")
+st.sidebar.write("✔ Compare resumes")
+st.sidebar.write("✔ Improve ATS score")
+st.sidebar.write("✔ Identify missing skills")
+st.sidebar.write("✔ Receive AI recommendations")
 
 st.sidebar.markdown("---")
 
-st.sidebar.markdown("### 🤖 AI Engine")
-st.sidebar.write("• SentenceTransformer")
-st.sidebar.write("• Semantic Similarity")
-st.sidebar.write("• ATS Evaluation")
-st.sidebar.write("• PDF Report Generation")
+# --- EXPANDED MATURED DEVELOPER CARD ---
+st.sidebar.markdown("### 👩🏻‍💻 Developer Matrix")
+st.sidebar.write("**Developed By:** Aditi Das")
+st.sidebar.write("**Version:** `v2.0`")
+st.sidebar.write("**Institution:** JCRE Global College")
+st.sidebar.caption("Academic Year: 2022-2026")
 
 st.sidebar.divider()
 
@@ -302,13 +308,14 @@ if page == "💻 CS Career Explorer":
                 
                 st.success(f"💥 Top Recommended Track: **{df.iloc[0]['Target Domain']}**")
                 
+                # --- GREEN + GOLD THEME FOR CS CAREER EXPLORER ---
                 fig_bar = px.bar(
                     df, 
                     x='Match Strength (%)', 
                     y='Target Domain', 
                     orientation='h', 
                     color='Match Strength (%)', 
-                    color_continuous_scale='Reds', 
+                    color_continuous_scale=[[0, '#1E4620'], [1, '#D4AF37']], # Deep Forest Green to Rich Gold
                     text='Match Strength (%)'
                 )
                 
@@ -372,7 +379,6 @@ else:
                 st.session_state.weighted_skill_score = calculate_weighted_score(matched_skills)
                 st.session_state.interview_probability = calculate_interview_probability(match_percentage, ats_score, matched_skills)
                 
-                # Setup custom clear feedback string metrics instead of high dimensional text
                 if match_percentage < 50:
                     st.session_state.narrative = "Your resume currently has limited alignment with the selected job description. Adding relevant technical skills and project experience can significantly improve your match score."
                 elif match_percentage < 75:
@@ -386,12 +392,12 @@ else:
     if st.session_state.analyzed:
         st.subheader("📊 Alignment Metrics Hub")
         
-        # Display the custom clear alignment feedback narrative directly above gauges
         st.info(st.session_state.narrative)
         
         col1, col2, col3 = st.columns(3)
         chart_text_color = "#1E293B" 
         
+        # --- ELEGANT BLUE + GREY THEME FOR GAUGES ON ANALYZER PAGE ---
         def create_gauge(title, score, bar_color):
             fig = go.Figure(go.Indicator(
                 mode="gauge+number",
@@ -400,8 +406,8 @@ else:
                 title={'text': title, 'font': {'size': 16, 'color': chart_text_color}},
                 gauge={
                     'axis': {'range': [0, 100], 'tickwidth': 1, 'tickcolor': chart_text_color},
-                    'bar': {'color': bar_color},
-                    'bgcolor': "rgba(0,0,0,0.05)",
+                    'bar': {'color': bar_color}, # High-end Professional Blue accent
+                    'bgcolor': "#E2E8F0",        # Clean Architectural Muted Grey
                     'bordercolor': "rgba(0,0,0,0.1)"
                 }
             ))
@@ -415,11 +421,11 @@ else:
             return fig
 
         with col1:
-            st.plotly_chart(create_gauge("Profile Match Rating", st.session_state.percentage, "#991B1B"), use_container_width=True)
+            st.plotly_chart(create_gauge("Profile Match Rating", st.session_state.percentage, "#1E3A8A"), use_container_width=True)
         with col2:
-            st.plotly_chart(create_gauge("Layout Check Rating", st.session_state.ats_score, "#F59E0B"), use_container_width=True)
+            st.plotly_chart(create_gauge("Layout Check Rating", st.session_state.ats_score, "#475569"), use_container_width=True)
         with col3:
-            st.plotly_chart(create_gauge("Interview Call Chance", st.session_state.interview_probability, "#1E3A8A"), use_container_width=True)
+            st.plotly_chart(create_gauge("Interview Call Chance", st.session_state.interview_probability, "#0F172A"), use_container_width=True)
 
         st.subheader("💡 Suggested Improvements")
         if st.session_state.resume_suggestions:
@@ -443,10 +449,4 @@ else:
             label="📥 Download Summary Report (PDF)", 
             data=pdf_bytes, 
             file_name="CareerAI_Analysis.pdf", 
-            mime="application/pdf", 
-            use_container_width=True
-        )
-        
-        st.divider()
-        if st.button("🔄 Upload a Different Profile", use_container_width=True):
-            reset_analysis()
+            mime="application/p
