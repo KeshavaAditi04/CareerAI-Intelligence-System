@@ -151,112 +151,23 @@ if 'weighted_skill_score' not in st.session_state: st.session_state.weighted_ski
 st.sidebar.title("🌑 CareerAI Platform v1.2")
 page = st.sidebar.radio("Navigate System:", ["🔍 Tech Career Pathway Predictor", "🎯 Precision Profile Matching"], key="navigation_radio")
 
-WHITE_BG = "https://github.com/KeshavaAditi04/CareerAI-Intelligence-System/raw/refs/heads/main/ChatGPT%20Image%20Jul%207,%202026,%2002_42_59%20AM.png"
-GREEN_BG = "https://github.com/KeshavaAditi04/CareerAI-Intelligence-System/raw/refs/heads/main/ChatGPT%20Image%20Jul%207,%202026,%2002_46_38%20AM.png"
+st.sidebar.divider()
 
-bg_url = GREEN_BG if page == "🔍 Tech Career Pathway Predictor" else WHITE_BG
+# --- NEW CLEAN CUSTOM DEVELOPER & ENGINE INFRASTRUCTURE ---
+st.sidebar.markdown("### 👩🏻‍💻 Developer")
+st.sidebar.write("**Aditi Das**")
+st.sidebar.caption("BCA Final Year Project | 2026")
 
-# Enforce crisp charcoal styling on both pages to contrast against the light background panels
-text_color = "#1E293B"       
-label_color = "#0F172A"      
-card_bg = "rgba(255, 255, 255, 0.85)" 
-card_border = "rgba(15, 23, 42, 0.15)"
+st.sidebar.markdown("---")
 
-if page == "🎯 Precision Profile Matching":
-    header_color = "#991B1B"     
-else:
-    header_color = "#1E3A8A"     
-
-css_template = """
-    <style>
-    /* MAIN INTERFACE BACKGROUND FRAMEWORKS */
-    [data-testid="stAppViewContainer"], 
-    [data-testid="stHeader"], 
-    .main, 
-    .stApp,
-    [data-testid="stAppViewBlockContainer"] {
-        background-image: url("VAR_BG_URL") !important;
-        background-size: cover !important;
-        background-position: center !important;
-        background-attachment: fixed !important;
-        animation: none !important;
-    }
-
-    /* FORCE TEXT ELEMENTS TO DARK RED/SLATE INSTEAD OF WASHED OUT WHITE */
-    .stMarkdown p, .stMarkdown li, div, p, span, .stText p {
-        color: VAR_TEXT_COLOR !important;
-    }
-    
-    /* TARGET DROPZONE AND LABEL PROMPT LAYERS */
-    [data-testid="stWidgetLabel"] p, label, [data-testid="stFileUploadDropzone"] div {
-        color: VAR_LABEL_COLOR !important;
-        font-weight: 700 !important;
-    }
-
-    /* TARGET INTERFACE HEADINGS */
-    h1, h2, h3, .stSubheader, [data-testid="stHeader"] h1, .stMarkdown h1, .stMarkdown h2, .stMarkdown h3, [data-testid="stHeadingWithLink"] h1 {
-        color: VAR_HEADER_COLOR !important;
-        font-weight: 900 !important;
-    }
-
-    /* CARD WRAPPERS */
-    [data-testid="stForm"], .stAlert, .gap-box-critical, .gap-box-optimize, .roadmap-card, [data-testid="stFileUploadDropzone"] {
-        background-color: VAR_CARD_BG !important;
-        border: 2px solid VAR_CARD_BORDER !important;
-        backdrop-filter: blur(12px) !important;
-        -webkit-backdrop-filter: blur(12px) !important;
-    }
-
-    /* SIDEBAR ELEMENT FIXES */
-    [data-testid="stSidebar"] {
-        background-color: #050807 !important; 
-        border-right: 1px solid rgba(245, 158, 11, 0.15) !important;
-    }
-    [data-testid="stSidebar"] h1, [data-testid="stSidebar"] h1 span {
-        color: #FFFFFF !important;
-    }
-    [data-testid="stSidebar"] h3, [data-testid="stSidebar"] h3 span {
-        color: #F59E0B !important;
-    }
-    [data-testid="stSidebar"] p,
-    [data-testid="stSidebar"] span,
-    [data-testid="stSidebar"] label,
-    [data-testid="stSidebar"] caption,
-    [data-testid="stSidebar"] .stMarkdown p,
-    [data-testid="stSidebar"] [data-testid="stWidgetLabel"] p {
-        color: #F8FAFC !important;
-    }
-    [data-testid="stSidebar"] [data-testid="stWidgetLabel"] + div label span,
-    [data-testid="stSidebar"] [data-testid="stRadio"] div p {
-        color: #FFFFFF !important;
-        font-weight: 600 !important;
-    }
-    [data-testid="stSidebar"] code {
-        color: #1E293B !important;
-        font-weight: 700 !important;
-    }
-    </style>
-"""
-
-custom_css = (css_template
-              .replace("VAR_BG_URL", bg_url)
-              .replace("VAR_TEXT_COLOR", text_color)
-              .replace("VAR_LABEL_COLOR", label_color)
-              .replace("VAR_HEADER_COLOR", header_color)
-              .replace("VAR_CARD_BG", card_bg)
-              .replace("VAR_CARD_BORDER", card_border))
-
-st.markdown(custom_css, unsafe_allow_html=True)
-
-with st.sidebar.container():
-    st.caption("⚡ SYSTEM DEVELOPER")
-    st.subheader("Aditi Das")
-    st.markdown("🎓 **Project Matrix Domain**")
-    st.code("BCA Final Year Project | 2026", language="text")
-    st.markdown("🧠 **Core Architecture**")
-    st.caption("SentenceTransformer NLP")
+st.sidebar.markdown("### 🤖 AI Engine")
+st.sidebar.write("• SentenceTransformer")
+st.sidebar.write("• Semantic Similarity")
+st.sidebar.write("• ATS Evaluation")
+st.sidebar.write("• PDF Report Generation")
 
 st.sidebar.divider()
+    
 
 # --- 5. PAGE 1: TECH CAREER PATHWAY PREDICTOR ---
 if page == "🔍 Tech Career Pathway Predictor":
