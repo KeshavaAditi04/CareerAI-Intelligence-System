@@ -123,20 +123,19 @@ def create_pdf_report(percentage, gaps, summary):
     pdf.multi_cell(0, 10, f"Analysis Summary:\n{safe_summary}")
     return pdf.output(dest='S').encode('latin-1')
 def create_radar_chart(match_score, ats_score, interview_prob):
-    categories = ['Job Match', 'ATS Format', 'Interview Chance', 'Skill Alignment']
-    # Calculate a proxy for skill alignment based on match and ATS
-    skill_align = min(round((match_score + ats_score) / 2), 100)
-    
+    # Wrap in <b> tags if you want bold labels on the chart
+    categories = ['<b>Match Score</b>', '<b>ATS Score</b>', '<b>Interview Probability</b>', '<b>Match Score</b>']
+    values = [match_score, ats_score, interview_prob, match_score]
+
     fig = go.Figure()
 
-    # Candidate Profile Polygon
+    # User Score Polygon
     fig.add_trace(go.Scatterpolar(
-        r=[match_score, ats_score, interview_prob, skill_align],
+        r=values,
         theta=categories,
         fill='toself',
         name='Your Profile',
-        fillcolor='rgba(30, 58, 138, 0.4)', # Semi-transparent Navy Blue
-        line=dict(color='#1E3A8A', width=2)
+        line=dict(width=2)
     ))
 
     # Target Benchmark Polygon (100% ideal)
@@ -152,7 +151,10 @@ def create_radar_chart(match_score, ats_score, interview_prob):
     fig.update_layout(
         polar=dict(
             radialaxis=dict(visible=True, range=[0, 100], color="#1E293B"),
-            angularaxis=dict(color="#1E293B", font=dict(size=12, weight="bold"))
+            angularaxis=dict(
+                color="#1E293B", 
+                tickfont=dict(size=12)  # Replaced invalid font/weight keys
+            )
         ),
         showlegend=True,
         paper_bgcolor="rgba(0,0,0,0)",
