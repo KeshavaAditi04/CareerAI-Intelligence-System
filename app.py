@@ -122,7 +122,47 @@ def create_pdf_report(percentage, gaps, summary):
     pdf.set_font("Arial", '', 11)
     pdf.multi_cell(0, 10, f"Analysis Summary:\n{safe_summary}")
     return pdf.output(dest='S').encode('latin-1')
+def create_radar_chart(match_score, ats_score, interview_prob):
+    categories = ['Job Match', 'ATS Format', 'Interview Chance', 'Skill Alignment']
+    # Calculate a proxy for skill alignment based on match and ATS
+    skill_align = min(round((match_score + ats_score) / 2), 100)
+    
+    fig = go.Figure()
 
+    # Candidate Profile Polygon
+    fig.add_trace(go.Scatterpolar(
+        r=[match_score, ats_score, interview_prob, skill_align],
+        theta=categories,
+        fill='toself',
+        name='Your Profile',
+        fillcolor='rgba(30, 58, 138, 0.4)', # Semi-transparent Navy Blue
+        line=dict(color='#1E3A8A', width=2)
+    ))
+
+    # Target Benchmark Polygon (100% ideal)
+    fig.add_trace(go.Scatterpolar(
+        r=[100, 100, 100, 100],
+        theta=categories,
+        fill='toself',
+        name='Ideal Target',
+        fillcolor='rgba(148, 163, 184, 0.15)', # Light grey background target
+        line=dict(color='#94A3B8', width=1, dash='dash')
+    ))
+
+    fig.update_layout(
+        polar=dict(
+            radialaxis=dict(visible=True, range=[0, 100], color="#1E293B"),
+            angularaxis=dict(color="#1E293B", font=dict(size=12, weight="bold"))
+        ),
+        showlegend=True,
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        font=dict(color="#1E293B"),
+        height=380,
+        margin=dict(l=40, r=40, t=30, b=30)
+    )
+    return fig
+    
 def reset_analysis():
     st.session_state.analyzed = False
     
@@ -388,16 +428,14 @@ else:
                     
                 st.session_state.analyzed = True
                 status.update(label="Analysis Complete!", state="complete", expanded=False)
-
-    if st.session_state.analyzed:
+if st.session_state.analyzed:
         st.subheader("📊 Alignment Metrics Hub")
-        
         st.info(st.session_state.narrative)
         
+        # --- TOP LEVEL GAUGES ---
         col1, col2, col3 = st.columns(3)
         chart_text_color = "#1E293B" 
         
-        # --- ELEGANT BLUE + GREY THEME FOR GAUGES ON ANALYZER PAGE ---
         def create_gauge(title, score, bar_color):
             fig = go.Figure(go.Indicator(
                 mode="gauge+number",
@@ -406,8 +444,8 @@ else:
                 title={'text': title, 'font': {'size': 16, 'color': chart_text_color}},
                 gauge={
                     'axis': {'range': [0, 100], 'tickwidth': 1, 'tickcolor': chart_text_color},
-                    'bar': {'color': bar_color}, # High-end Professional Blue accent
-                    'bgcolor': "#E2E8F0",        # Clean Architectural Muted Grey
+                    'bar': {'color': bar_color}, 
+                    'bgcolor': "#E2E8F0",
                     'bordercolor': "rgba(0,0,0,0.1)"
                 }
             ))
@@ -415,8 +453,8 @@ else:
                 paper_bgcolor="rgba(0,0,0,0)", 
                 plot_bgcolor="rgba(0,0,0,0)", 
                 font=dict(color=chart_text_color),
-                height=240, 
-                margin=dict(l=30, r=30, t=50, b=10)
+                height=220, 
+                margin=dict(l=20, r=20, t=40, b=10)
             )
             return fig
 
@@ -427,6 +465,22 @@ else:
         with col3:
             st.plotly_chart(create_gauge("Interview Call Chance", st.session_state.interview_probability, "#0F172A"), use_container_width=True)
 
+        st.divider()
+
+        # --- NEW RADAR CHART COMPARISON SECTION ---
+        st.subheader("🕸️ Profile Alignment Radar")
+        st.plotly_chart(
+            create_radar_chart(
+                st.session_state.percentage, 
+                st.session_state.ats_score, 
+                st.session_state.interview_probability
+            ), 
+            use_container_width=True
+        )
+
+        st.divider()
+
+        # --- SUGGESTIONS & MISSING SKILLS ---
         st.subheader("💡 Suggested Improvements")
         if st.session_state.resume_suggestions:
             for rec in st.session_state.resume_suggestions:
@@ -443,15 +497,27 @@ else:
                     st.markdown(f"[Find Study Guides ↗]({get_youtube_link(gap)})")
         else:
             st.success("No missing core technical competency gaps recognized.")
-        pdf_bytes = create_pdf_report(
-            st.session_state.percentage, 
-            st.session_state.skill_gaps, 
-            st.session_state.narrative
-        )
-        st.download_button(
-            label="📥 Download Summary Report (PDF)", 
-            data=pdf_bytes, 
-            file_name="CareerAI_Analysis.pdf", 
-            mime="application/pdf", 
-            use_container_width=True
-        )
+
+        st.divider()
+
+        # --- ACTION BUTTONS (REPORT DOWNLOAD & RESET) ---
+        col_btn1, col_btn2 = st.columns(2)
+        
+        with col_btn1:
+            pdf_bytes = create_pdf_report(
+                st.session_state.percentage, 
+                st.session_state.skill_gaps, 
+                st.session_state.narrative
+            )
+            st.download_button(
+                label="📥 Download Summary Report (PDF)", 
+                data=pdf_bytes, 
+                file_name="CareerAI_Analysis.pdf", 
+                mime="application/pdf", 
+                use_container_width=True
+            )
+
+        with col_btn2:
+            if st.button("🔄 Upload New Resume", use_container_width=True):
+                reset_analysis()
+            
