@@ -175,7 +175,11 @@ def reset_analysis():
     st.session_state.resume_suggestions = []
     st.session_state.matched_skills = []
     
-    for key in ["p1_uploader", "p2_uploader", "job_requirements_text", "job_input_box"]:
+    # 1. Clear text box value safely
+    st.session_state["job_input_box"] = ""
+    
+    # 2. Clear file uploader keys
+    for key in ["p1_uploader", "p2_uploader"]:
         if key in st.session_state:
             del st.session_state[key]
             
@@ -383,11 +387,14 @@ else:
     st.write("### Scope: Optimized for Computer Science, IT, and Software Engineering pathways.")
     st.write("Analyze how well your current resume aligns with a targeted job specification.")
 
-    with st.form("alignment_matrix_form"):
-        job_default = st.session_state.get("job_requirements_text", "")
+        with st.form("alignment_matrix_form"):
         res_file = st.file_uploader("Upload Resume (PDF)", type=["pdf"], key="p2_uploader")
-        job_desc = st.text_area("Paste Job Description", value=job_default, key="job_input_box")
-        submit_btn = st.form_submit_button
+        
+        # Pull text from session_state safely, defaulting to empty string
+        job_val = st.session_state.get("job_input_box", "")
+        job_desc = st.text_area("Paste Job Description", value=job_val, key="job_input_box")
+        
+        submit_btn = st.form_submit_button("Analyze Resume")
 
     if submit_btn and res_file and job_desc:
         with st.status("Analyzing Resume...", expanded=True) as status:
