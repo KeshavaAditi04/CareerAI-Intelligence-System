@@ -167,14 +167,19 @@ def create_radar_chart(match_score, ats_score, interview_prob):
     
 def reset_analysis():
     st.session_state.analyzed = False
+    st.session_state.percentage = 0.0
+    st.session_state.skill_gaps = []
+    st.session_state.narrative = ""
+    st.session_state.ats_score = 0
+    st.session_state.interview_probability = 0.0
+    st.session_state.resume_suggestions = []
+    st.session_state.matched_skills = []
+    st.session_state.weighted_skill_score = 0
     
-    if "p1_uploader" in st.session_state:
-        del st.session_state["p1_uploader"]
-    if "p2_uploader" in st.session_state:
-        del st.session_state["p2_uploader"]
-    if "job_requirements_text" in st.session_state:
-        del st.session_state["job_requirements_text"]
-        
+    for key in ["p1_uploader", "p2_uploader", "job_requirements_text"]:
+        if key in st.session_state:
+            del st.session_state[key]
+            
     st.rerun()
 
 # Initialize Session States
