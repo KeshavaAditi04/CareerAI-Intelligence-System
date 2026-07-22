@@ -387,10 +387,10 @@ else:
     st.write("### Scope: Optimized for Computer Science, IT, and Software Engineering pathways.")
     st.write("Analyze how well your current resume aligns with a targeted job specification.")
 
-        with st.form("alignment_matrix_form"):
+    with st.form("alignment_matrix_form"):
         res_file = st.file_uploader("Upload Resume (PDF)", type=["pdf"], key="p2_uploader")
         
-        # Pull text from session_state safely, defaulting to empty string
+        # Safely pull text from session state (defaults to empty string)
         job_val = st.session_state.get("job_input_box", "")
         job_desc = st.text_area("Paste Job Description", value=job_val, key="job_input_box")
         
