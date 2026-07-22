@@ -384,10 +384,10 @@ else:
     st.write("Analyze how well your current resume aligns with a targeted job specification.")
 
         with st.form("alignment_matrix_form"):
-        job_default = st.session_state.get("job_requirements_text", "")
-        res_file = st.file_uploader("Upload Resume (PDF)", type=["pdf"], key="p2_uploader")
-        job_desc = st.text_area("Paste Job Description", value=job_default, key="job_input_box")
-        submit_btn = st.form_submit_button("Analyze Resume")
+            job_default = st.session_state.get("job_requirements_text", "")
+            res_file = st.file_uploader("Upload Resume (PDF)", type=["pdf"], key="p2_uploader")
+            job_desc = st.text_area("Paste Job Description", value=job_default, key="job_input_box")
+            submit_btn = st.form_submit_button
 
     if submit_btn and res_file and job_desc:
         with st.status("Analyzing Resume...", expanded=True) as status:
