@@ -123,7 +123,6 @@ def create_pdf_report(percentage, gaps, summary):
     pdf.multi_cell(0, 10, f"Analysis Summary:\n{safe_summary}")
     return pdf.output(dest='S').encode('latin-1')
 def create_radar_chart(match_score, ats_score, interview_prob):
-    # Wrap in <b> tags if you want bold labels on the chart
     categories = ['<b>Match Score</b>', '<b>ATS Score</b>', '<b>Interview Probability</b>', '<b>Match Score</b>']
     values = [match_score, ats_score, interview_prob, match_score]
 
@@ -166,6 +165,7 @@ def create_radar_chart(match_score, ats_score, interview_prob):
     return fig
     
 def reset_analysis():
+    # 1. Reset metrics and flags
     st.session_state.analyzed = False
     st.session_state.percentage = 0.0
     st.session_state.skill_gaps = []
@@ -175,10 +175,9 @@ def reset_analysis():
     st.session_state.resume_suggestions = []
     st.session_state.matched_skills = []
     
-    # 1. Clear text box value safely
-    st.session_state["job_input_box"] = ""
+
+    st.session_state["reset_counter"] = st.session_state.get("reset_counter", 0) + 1
     
-    # 2. Clear file uploader keys
     for key in ["p1_uploader", "p2_uploader"]:
         if key in st.session_state:
             del st.session_state[key]
@@ -386,13 +385,22 @@ else:
     st.title("CareerAI Computer Science Career Assistant")
     st.write("### Scope: Optimized for Computer Science, IT, and Software Engineering pathways.")
     st.write("Analyze how well your current resume aligns with a targeted job specification.")
+    if "reset_counter" not in st.session_state:
+        st.session_state["reset_counter"] = 0
+
+    reset_id = st.session_state["reset_counter"]
 
     with st.form("alignment_matrix_form"):
-        res_file = st.file_uploader("Upload Resume (PDF)", type=["pdf"], key="p2_uploader")
+        res_file = st.file_uploader(
+            "Upload Resume (PDF)", 
+            type=["pdf"], 
+            key=f"p2_uploader_{reset_id}"
+        )
         
-        # Safely pull text from session state (defaults to empty string)
-        job_val = st.session_state.get("job_input_box", "")
-        job_desc = st.text_area("Paste Job Description", value=job_val, key="job_input_box")
+        job_desc = st.text_area(
+            "Paste Job Description", 
+            key=f"job_input_box_{reset_id}"
+        )
         
         submit_btn = st.form_submit_button("Analyze Resume")
 
@@ -534,4 +542,3 @@ if st.session_state.analyzed:
         with col_btn2:
             if st.button("🔄 Upload New Resume", use_container_width=True):
                 reset_analysis()
-            
