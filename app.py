@@ -123,7 +123,7 @@ def create_pdf_report(percentage, gaps, summary):
     pdf.multi_cell(0, 10, f"Analysis Summary:\n{safe_summary}")
     return pdf.output(dest='S').encode('latin-1')
 def create_radar_chart(match_score, ats_score, interview_prob):
-    categories = ['<b>Match Score</b>', '<b>ATS Score</b>', '<b>Interview Probability</b>', '<b>Match Score</b>']
+    categories = ['<b>Skill Alignment</b>', '<b>Resume Readiness</b>', '<b>Callback Likelihood</b>', '<b>Match Score</b>']
     values = [match_score, ats_score, interview_prob, match_score]
 
     fig = go.Figure()
@@ -196,7 +196,7 @@ if 'matched_skills' not in st.session_state: st.session_state.matched_skills = [
 if 'weighted_skill_score' not in st.session_state: st.session_state.weighted_skill_score = 0
 
 # --- 4. SIDEBAR NAVIGATION ("Choose a tool") ---
-st.sidebar.title("🌑 Choose a tool")
+st.sidebar.title("👩🏻‍💻 Choose your CareerAI tool :")
 page = st.sidebar.radio(
     "Select Assistant Mode:", 
     ["💻 CS Career Explorer", "📄 Resume Match Analyzer"], 
