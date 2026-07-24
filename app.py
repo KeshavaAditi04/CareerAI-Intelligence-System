@@ -195,6 +195,18 @@ if 'resume_suggestions' not in st.session_state: st.session_state.resume_suggest
 if 'matched_skills' not in st.session_state: st.session_state.matched_skills = []
 if 'weighted_skill_score' not in st.session_state: st.session_state.weighted_skill_score = 0
 
+# --- SIDEBAR BACKGROUND STYLING ---
+st.markdown("""
+    <style>
+    [data-testid="stSidebar"] {
+        background-image: linear-gradient(rgba(10, 15, 25, 0.75), rgba(10, 15, 25, 0.75)), url("https://raw.githubusercontent.com/KeshavaAditi04/CareerAI-Intelligence-System/main/ChatGPT%20Image%20Jul%2024,%202026,%2009_08_46%20PM.png");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 # --- 4. SIDEBAR NAVIGATION ("Choose a tool") ---
 st.sidebar.title("👩🏻‍💻 Choose your CareerAI tool :")
 page = st.sidebar.radio(
