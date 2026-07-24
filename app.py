@@ -321,14 +321,13 @@ st.markdown(custom_css, unsafe_allow_html=True)
 
 # --- 5. PAGE 1: CS CAREER EXPLORER ---
 if page == "💻 CS Career Explorer":
-    # --- PAGE 1 LOGO HEADER ---
-col_logo, col_header = st.columns([1, 4])
-with col_logo:
-    st.image(current_logo, width=130)
-with col_header:
-    st.title("CareerAI CS Career Assistant")
-    st.markdown("**Scope:** Optimized for Computer Science, IT, and Software Engineering pathways.")
-    st.write("Upload your resume to discover which technical career domain matches your skills best.")
+    col_logo, col_header = st.columns([1, 4])
+    with col_logo:
+        st.image(current_logo, width=130)
+    with col_header:
+        st.title("CareerAI CS Career Assistant")
+        st.markdown("**Scope:** Optimized for Computer Science, IT, and Software Engineering pathways.")
+        st.write("Upload your resume to discover which technical career domain matches your skills best.")
     
     benchmarks = {
         "Data Analytics": "SQL, Python, Power BI, data visualization, and statistical modeling.",
@@ -393,15 +392,13 @@ with col_header:
 
 # --- 6. PAGE 2: RESUME MATCH ANALYZER ---
 else:
-    # --- PAGE 2 LOGO HEADER ---
-col_logo, col_header = st.columns([1, 4])
-with col_logo:
-    st.image(current_logo, width=130)
-with col_header:
-    st.title("CareerAI Resume Match Analyzer")
-    st.markdown("**Scope:** Optimized for Computer Science, IT, and Software Engineering pathways.")
-    
-    st.write("Analyze how well your current resume aligns with a targeted job specification.")
+    col_logo, col_header = st.columns([1, 4])
+    with col_logo:
+        st.image(current_logo, width=130)
+    with col_header:
+        st.title("CareerAI Resume Match Analyzer")
+        st.markdown("**Scope:** Optimized for Computer Science, IT, and Software Engineering pathways.")
+        st.write("Analyze how well your current resume aligns with a targeted job specification.")
     
     if "reset_counter" not in st.session_state:
         st.session_state["reset_counter"] = 0
