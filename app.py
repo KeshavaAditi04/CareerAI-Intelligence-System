@@ -525,20 +525,23 @@ if st.session_state.analyzed:
 st.subheader("🌉 Skill Gap Bridge & Learning Roadmaps")
 st.caption("Customized step-by-step action plans generated for your missing technical skills.")
 
-# Check if skill gaps exist from the user's uploaded resume analysis
-if "skill_gaps" in st.session_state and st.session_state.skill_gaps:
-    for idx, item in enumerate(st.session_state.skill_gaps, 1):
-        # Handles both dynamic dictionary objects and string lists smoothly
+# Get missing skills from session state
+gaps = st.session_state.get("skill_gaps", [])
+
+if gaps:
+    for idx, item in enumerate(gaps, 1):
+        # Case 1: Gemini returned structured dictionaries
         if isinstance(item, dict):
-            skill_name = item.get("skill", f"Skill {idx}").title()
-            step1_text = item.get("step1", "Master core syntax and foundational concepts.")
-            step2_text = item.get("step2", "Build a practical mini-project incorporating this skill.")
-            step3_text = item.get("step3", "Quantify experience with this skill on your resume.")
+            skill_name = item.get("skill", f"Skill {idx}").strip().title()
+            step1_text = item.get("step1", f"Learn core syntax and principles of {skill_name}.")
+            step2_text = item.get("step2", f"Build a hands-on project incorporating {skill_name}.")
+            step3_text = item.get("step3", f"Add {skill_name} accomplishments to your resume.")
+        # Case 2: Gemini returned simple strings (e.g., "SQL", "Docker")
         else:
             skill_name = str(item).strip().title()
-            step1_text = f"Master foundational syntax and core principles for {skill_name}."
-            step2_text = f"Build a hands-on portfolio project applying {skill_name}."
-            step3_text = f"Add {skill_name} achievements to your resume with ATS metrics."
+            step1_text = f"Master foundational concepts and syntax for {skill_name}."
+            step2_text = f"Build a practical mini-project utilizing {skill_name}."
+            step3_text = f"Highlight {skill_name} skills with quantified metrics on your resume."
 
         with st.expander(f"🎯 Roadmap to Master: **{skill_name}**", expanded=(idx == 1)):
             st.markdown(f"### 🚀 3-Step Level-Up Guide: {skill_name}")
@@ -547,11 +550,11 @@ if "skill_gaps" in st.session_state and st.session_state.skill_gaps:
             with c1:
                 st.markdown("#### 1️⃣ Core Fundamentals")
                 st.info(step1_text)
-                st.caption("⏱️ Estimated: 1–2 Weeks")
+                st.caption("⏱️ 1–2 Weeks")
             with c2:
                 st.markdown("#### 2️⃣ Hands-on Project")
                 st.warning(step2_text)
-                st.caption("🛠️ Portfolio Focus")
+                st.caption("🛠️ Portfolio Piece")
             with c3:
                 st.markdown("#### 3️⃣ Resume & ATS Prep")
                 st.success(step3_text)
@@ -561,8 +564,12 @@ if "skill_gaps" in st.session_state and st.session_state.skill_gaps:
             search_url = f"https://www.google.com/search?q=free+learning+roadmap+for+{skill_name.replace(' ', '+')}"
             st.markdown(f"🔗 [**Explore Free Learning Resources for {skill_name}**]({search_url})")
 
+elif "percentage" in st.session_state and st.session_state.percentage > 0:
+    # If analysis was run but no missing skills were detected!
+    st.success("🎉 Excellent match! No major technical skill gaps were identified for this role.")
+
 else:
-    st.info("👆 Upload a resume and run analysis to generate customized learning roadmaps for your missing skills!")
+    st.info("👆 Upload a resume and click Analyze to generate customized learning roadmaps!")
 st.divider()
 # --- ACTION BUTTONS (REPORT DOWNLOAD & RESET) ---
 col_btn1, col_btn2 = st.columns(2)
