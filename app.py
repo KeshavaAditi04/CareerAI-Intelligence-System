@@ -521,58 +521,48 @@ if st.session_state.analyzed:
                 st.error(f"❌ {rec}")
         else:
             st.success("✅ Structural verification checks passed cleanly!")
-# --- PHASE 2: THE SKILL GAP BRIDGE (INTERACTIVE ROADMAP) ---
+ # --- PHASE 2: DYNAMIC SKILL GAP BRIDGE ---
 st.subheader("🌉 Skill Gap Bridge & Learning Roadmaps")
-st.caption("Interactive step-by-step action plans to bridge your identified technical skill gaps.")
+st.caption("Customized step-by-step action plans generated for your missing technical skills.")
 
-if st.session_state.skill_gaps:
-    for idx, gap in enumerate(st.session_state.skill_gaps, 1):
-        gap_clean = gap.strip().title()
-        
-        with st.expander(f"🎯 Roadmap to Master: **{gap_clean}**", expanded=(idx == 1)):
-            st.markdown(f"### 🚀 3-Step Level-Up Guide: {gap_clean}")
+# Check if skill gaps exist from the user's uploaded resume analysis
+if "skill_gaps" in st.session_state and st.session_state.skill_gaps:
+    for idx, item in enumerate(st.session_state.skill_gaps, 1):
+        # Handles both dynamic dictionary objects and string lists smoothly
+        if isinstance(item, dict):
+            skill_name = item.get("skill", f"Skill {idx}").title()
+            step1_text = item.get("step1", "Master core syntax and foundational concepts.")
+            step2_text = item.get("step2", "Build a practical mini-project incorporating this skill.")
+            step3_text = item.get("step3", "Quantify experience with this skill on your resume.")
+        else:
+            skill_name = str(item).strip().title()
+            step1_text = f"Master foundational syntax and core principles for {skill_name}."
+            step2_text = f"Build a hands-on portfolio project applying {skill_name}."
+            step3_text = f"Add {skill_name} achievements to your resume with ATS metrics."
+
+        with st.expander(f"🎯 Roadmap to Master: **{skill_name}**", expanded=(idx == 1)):
+            st.markdown(f"### 🚀 3-Step Level-Up Guide: {skill_name}")
             
-            col1, col2, col3 = st.columns(3)
-            
-            with col1:
+            c1, c2, c3 = st.columns(3)
+            with c1:
                 st.markdown("#### 1️⃣ Core Fundamentals")
-                st.info(f"Learn core syntax, key principles, and foundational concepts for **{gap_clean}**.")
-                st.caption("⏱️ Estimated Time: 1–2 Weeks")
-                
-            with col2:
+                st.info(step1_text)
+                st.caption("⏱️ Estimated: 1–2 Weeks")
+            with c2:
                 st.markdown("#### 2️⃣ Hands-on Project")
-                st.warning(f"Build a mini-project applying **{gap_clean}** alongside your current tech stack.")
-                st.caption("🛠️ Portfolio Piece")
-                
-            with col3:
+                st.warning(step2_text)
+                st.caption("🛠️ Portfolio Focus")
+            with c3:
                 st.markdown("#### 3️⃣ Resume & ATS Prep")
-                st.success(f"Add **{gap_clean}** achievements with quantified metrics to your bullet points.")
+                st.success(step3_text)
                 st.caption("💼 Job-Ready Output")
             
             st.markdown("---")
-            search_url = f"https://www.google.com/search?q=free+learning+roadmap+for+{gap_clean.replace(' ', '+')}"
-            st.markdown(f"🔗 [**Explore Free Learning Resources for {gap_clean}**]({search_url})")
+            search_url = f"https://www.google.com/search?q=free+learning+roadmap+for+{skill_name.replace(' ', '+')}"
+            st.markdown(f"🔗 [**Explore Free Learning Resources for {skill_name}**]({search_url})")
 
 else:
-    # Default visual preview if no skills are analyzed yet
-    st.info("💡 Run an analysis to generate customized learning roadmaps for your missing skills!")
-    
-    # Fallback preview so your interface never looks empty
-    with st.expander("🎯 Preview Roadmap: **Docker & Containerization**", expanded=True):
-        st.markdown("### 🚀 3-Step Level-Up Guide: Docker")
-        c1, c2, c3 = st.columns(3)
-        with c1:
-            st.markdown("#### 1️⃣ Core Fundamentals")
-            st.info("Containers vs VMs, Dockerfiles, and images.")
-            st.caption("⏱️ 1 Week")
-        with c2:
-            st.markdown("#### 2️⃣ Hands-on Project")
-            st.warning("Containerize a Python API with PostgreSQL.")
-            st.caption("🛠️ Portfolio Piece")
-        with c3:
-            st.markdown("#### 3️⃣ Resume & ATS Prep")
-            st.success("Highlight containerized deployments in project section.")
-            st.caption("💼 Job-Ready")
+    st.info("👆 Upload a resume and run analysis to generate customized learning roadmaps for your missing skills!")
     
         # --- ACTION BUTTONS (REPORT DOWNLOAD & RESET) ---
         col_btn1, col_btn2 = st.columns(2)
@@ -584,13 +574,4 @@ else:
                 st.session_state.narrative
             )
             st.download_button(
-                label="📥 Download Summary Report (PDF)", 
-                data=pdf_bytes, 
-                file_name="CareerAI_Analysis.pdf", 
-                mime="application/pdf", 
-                use_container_width=True
-            )
-
-        with col_btn2:
-            if st.button("🔄 Upload New Resume", use_container_width=True, key="reset_resume_btn"):
-                reset_analysis()
+                label="📥 Download Summary Rep
