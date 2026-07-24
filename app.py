@@ -416,8 +416,26 @@ else:
             key=f"p2_uploader_{reset_id}"
         )
         
+        # Preset Job Descriptions for Quick Demos
+        PRESET_JDS = {
+            "Custom (Paste Your Own)": "",
+            "Data Analyst": "Looking for a Data Analyst skilled in Python, SQL, Power BI, data visualization, statistical modeling, and Excel to create interactive dashboards and report metrics.",
+            "Software Engineer": "Seeking a Software Engineer with expertise in Java, C++, algorithms, system design, Git, unit testing, and building scalable web services.",
+            "Web Developer": "Hiring a Web Developer proficient in HTML, CSS, JavaScript, React, Node.js, and modern responsive web architecture."
+        }
+
+        selected_preset = st.selectbox(
+            "⚡ Quick Demo Preset (Optional)", 
+            options=list(PRESET_JDS.keys()),
+            help="Select a role to auto-populate a sample job description for testing."
+        )
+
+        default_text = PRESET_JDS[selected_preset]
+
         job_desc = st.text_area(
             "Paste Job Description", 
+            value=default_text,
+            height=150,
             key=f"job_input_box_{reset_id}"
         )
         
@@ -520,7 +538,26 @@ else:
             ), 
             use_container_width=True
         )
+        # --- SKILL MATCH TRANSPARENCY BREAKDOWN ---
+        with st.expander("🔍 **View Detailed Skill Match Breakdown**", expanded=True):
+            col_m1, col_m2 = st.columns(2)
+            
+            with col_m1:
+                st.markdown("#### ✅ Matched Technical Skills")
+                if st.session_state.matched_skills:
+                    matched_list = " • ".join([f"`{s.upper()}`" for s in st.session_state.matched_skills])
+                    st.markdown(matched_list)
+                else:
+                    st.caption("No exact keyword overlaps found from the target whitelist.")
 
+            with col_m2:
+                st.markdown("#### ⚠️ Identified Skill Gaps")
+                if st.session_state.skill_gaps:
+                    gaps_list = " • ".join([f"`{str(s).upper()}`" for s in st.session_state.skill_gaps])
+                    st.markdown(gaps_list)
+                else:
+                    st.caption("No critical skill gaps detected!")
+                
         st.divider()
 
         # Suggestions & Critical Feedback
@@ -587,6 +624,7 @@ else:
                 st.session_state.skill_gaps, 
                 st.session_state.narrative
             )
+        st.info("💡 **Thesis Tip:** Press **Ctrl + P** (or **Cmd + P** on Mac) in your browser to save a clean visual snapshot of this full dashboard UI for your final thesis write-up.")
             st.download_button(
                 label="📥 Download Summary Report (PDF)",
                 data=pdf_bytes,
