@@ -521,55 +521,49 @@ if st.session_state.analyzed:
                 st.error(f"❌ {rec}")
         else:
             st.success("✅ Structural verification checks passed cleanly!")
- # --- PHASE 2: DYNAMIC SKILL GAP BRIDGE ---
-st.subheader("🌉 Skill Gap Bridge & Learning Roadmaps")
-st.caption("Customized step-by-step action plans generated for your missing technical skills.")
+# --- PHASE 2: 3-WEEK SKILL GAP ROADMAP ---
+st.subheader("🌉 3-Week Skill Gap Roadmap")
+st.caption("A structured, week-by-week action plan with curated video resources to bridge your technical skill gaps.")
 
-# Get missing skills from session state
+# Retrieve missing skills or provide a default sample if none detected yet
 gaps = st.session_state.get("skill_gaps", [])
 
-if gaps:
-    for idx, item in enumerate(gaps, 1):
-        # Case 1: Gemini returned structured dictionaries
-        if isinstance(item, dict):
-            skill_name = item.get("skill", f"Skill {idx}").strip().title()
-            step1_text = item.get("step1", f"Learn core syntax and principles of {skill_name}.")
-            step2_text = item.get("step2", f"Build a hands-on project incorporating {skill_name}.")
-            step3_text = item.get("step3", f"Add {skill_name} accomplishments to your resume.")
-        # Case 2: Gemini returned simple strings (e.g., "SQL", "Docker")
-        else:
-            skill_name = str(item).strip().title()
-            step1_text = f"Master foundational concepts and syntax for {skill_name}."
-            step2_text = f"Build a practical mini-project utilizing {skill_name}."
-            step3_text = f"Highlight {skill_name} skills with quantified metrics on your resume."
+if not gaps:
+    # Default preview skills if no analysis has been run yet
+    gaps = ["SQL Optimization", "Power BI Dashboards", "Python Data Pipelines"]
 
-        with st.expander(f"🎯 Roadmap to Master: **{skill_name}**", expanded=(idx == 1)):
-            st.markdown(f"### 🚀 3-Step Level-Up Guide: {skill_name}")
-            
-            c1, c2, c3 = st.columns(3)
-            with c1:
-                st.markdown("#### 1️⃣ Core Fundamentals")
-                st.info(step1_text)
-                st.caption("⏱️ 1–2 Weeks")
-            with c2:
-                st.markdown("#### 2️⃣ Hands-on Project")
-                st.warning(step2_text)
-                st.caption("🛠️ Portfolio Piece")
-            with c3:
-                st.markdown("#### 3️⃣ Resume & ATS Prep")
-                st.success(step3_text)
-                st.caption("💼 Job-Ready Output")
-            
-            st.markdown("---")
-            search_url = f"https://www.google.com/search?q=free+learning+roadmap+for+{skill_name.replace(' ', '+')}"
-            st.markdown(f"🔗 [**Explore Free Learning Resources for {skill_name}**]({search_url})")
+for idx, item in enumerate(gaps, 1):
+    skill_name = str(item.get("skill") if isinstance(item, dict) else item).strip().title()
+    
+    # Generate YouTube search link for the specific skill
+    yt_query = f"{skill_name}+full+course+tutorial".replace(" ", "+")
+    yt_url = f"https://www.youtube.com/results?search_query={yt_query}"
 
-elif "percentage" in st.session_state and st.session_state.percentage > 0:
-    # If analysis was run but no missing skills were detected!
-    st.success("🎉 Excellent match! No major technical skill gaps were identified for this role.")
+    with st.expander(f"🎯 **{skill_name}** — 3-Week Mastery Plan", expanded=(idx == 1)):
+        st.markdown(f"### 📅 Roadmap: {skill_name}")
+        
+        col1, col2, col3 = st.columns(3)
+        
+        with col1:
+            st.markdown("#### 🗓️ Week 1: Core Concepts")
+            st.info(f"Master syntax, core architecture, and foundational rules of **{skill_name}**.")
+            st.caption("🎯 Goal: Understand theoretical principles")
 
-else:
-    st.info("👆 Upload a resume and click Analyze to generate customized learning roadmaps!")
+        with col2:
+            st.markdown("#### 🗓️ Week 2: Hands-on Build")
+            st.warning(f"Construct a mini portfolio project applying **{skill_name}** to real datasets.")
+            st.caption("🎯 Goal: Create 1 portfolio item")
+
+        with col3:
+            st.markdown("#### 🗓️ Week 3: ATS & Interview Prep")
+            st.success(f"Add **{skill_name}** achievements with quantified metrics to your resume and practice Q&A.")
+            st.caption("🎯 Goal: Finalize resume bullet points")
+
+        st.markdown("---")
+        
+        # YouTube Tutorial Button / Link
+        st.markdown(f"📺 [**Watch Free {skill_name} Tutorials on YouTube**]({yt_url})")
+
 st.divider()
 # --- ACTION BUTTONS (REPORT DOWNLOAD & RESET) ---
 col_btn1, col_btn2 = st.columns(2)
