@@ -569,7 +569,7 @@ elif "percentage" in st.session_state and st.session_state.percentage > 0:
     st.success("🎉 Excellent match! No major technical skill gaps were identified for this role.")
 
 else:
-    st.info("👆 Upload a resume and click Analyze to generate customized learning roadmaps!"
+    st.info("👆 Upload a resume and click Analyze to generate customized learning roadmaps!")
 st.divider()
 # --- ACTION BUTTONS (REPORT DOWNLOAD & RESET) ---
 col_btn1, col_btn2 = st.columns(2)
