@@ -521,48 +521,55 @@ if st.session_state.analyzed:
                 st.error(f"❌ {rec}")
         else:
             st.success("✅ Structural verification checks passed cleanly!")
-# --- PHASE 2: 3-WEEK SKILL GAP ROADMAP ---
-st.subheader("🌉 3-Week Skill Gap Roadmap")
-st.caption("A structured, week-by-week action plan with curated video resources to bridge your technical skill gaps.")
+# =========================================================
+# PHASE 2: CUSTOM 3-WEEK SKILL GAP ROADMAP (RESUME PARSER)
+# =========================================================
+st.subheader("🌉 Custom 3-Week Skill Gap Roadmap")
+st.caption("Personalized learning plans generated directly from your resume and job description analysis.")
 
-# Retrieve missing skills or provide a default sample if none detected yet
+# Retrieve analyzed skill gaps from session state
 gaps = st.session_state.get("skill_gaps", [])
 
-if not gaps:
-    # Default preview skills if no analysis has been run yet
-    gaps = ["SQL Optimization", "Power BI Dashboards", "Python Data Pipelines"]
+if gaps and isinstance(gaps, list) and len(gaps) > 0:
+    for idx, item in enumerate(gaps, 1):
+        # Extract custom AI-generated fields
+        if isinstance(item, dict):
+            skill_name = item.get("skill", f"Skill {idx}").strip().title()
+            w1_text = item.get("week1", "Master core fundamentals and syntax.")
+            w2_text = item.get("week2", "Build a practical hands-on project.")
+            w3_text = item.get("week3", "Draft quantified resume bullet points.")
+            yt_query = item.get("yt_search", f"{skill_name} full tutorial").replace(" ", "+")
+        else:
+            # Fallback if skill_gaps is a list of skill strings from Gemini
+            skill_name = str(item).strip().title()
+            w1_text = f"Master foundational syntax and concepts for {skill_name}."
+            w2_text = f"Build a practical mini-project applying {skill_name}."
+            w3_text = f"Add quantified {skill_name} metrics to your resume."
+            yt_query = f"{skill_name}+tutorial+full+course".replace(" ", "+")
 
-for idx, item in enumerate(gaps, 1):
-    skill_name = str(item.get("skill") if isinstance(item, dict) else item).strip().title()
-    
-    # Generate YouTube search link for the specific skill
-    yt_query = f"{skill_name}+full+course+tutorial".replace(" ", "+")
-    yt_url = f"https://www.youtube.com/results?search_query={yt_query}"
+        yt_url = f"https://www.youtube.com/results?search_query={yt_query}"
 
-    with st.expander(f"🎯 **{skill_name}** — 3-Week Mastery Plan", expanded=(idx == 1)):
-        st.markdown(f"### 📅 Roadmap: {skill_name}")
-        
-        col1, col2, col3 = st.columns(3)
-        
-        with col1:
-            st.markdown("#### 🗓️ Week 1: Core Concepts")
-            st.info(f"Master syntax, core architecture, and foundational rules of **{skill_name}**.")
-            st.caption("🎯 Goal: Understand theoretical principles")
+        with st.expander(f"🎯 **{skill_name}** — Customized 3-Week Plan", expanded=(idx == 1)):
+            col1, col2, col3 = st.columns(3)
+            
+            with col1:
+                st.markdown("#### 🗓️ Week 1: Fundamentals")
+                st.info(w1_text)
+                
+            with col2:
+                st.markdown("#### 🗓️ Week 2: Mini-Project")
+                st.warning(w2_text)
+                
+            with col3:
+                st.markdown("#### 🗓️ Week 3: ATS & Resume")
+                st.success(w3_text)
 
-        with col2:
-            st.markdown("#### 🗓️ Week 2: Hands-on Build")
-            st.warning(f"Construct a mini portfolio project applying **{skill_name}** to real datasets.")
-            st.caption("🎯 Goal: Create 1 portfolio item")
+            st.markdown("---")
+            st.markdown(f"📺 [**Watch Free {skill_name} Tutorials on YouTube**]({yt_url})")
 
-        with col3:
-            st.markdown("#### 🗓️ Week 3: ATS & Interview Prep")
-            st.success(f"Add **{skill_name}** achievements with quantified metrics to your resume and practice Q&A.")
-            st.caption("🎯 Goal: Finalize resume bullet points")
-
-        st.markdown("---")
-        
-        # YouTube Tutorial Button / Link
-        st.markdown(f"📺 [**Watch Free {skill_name} Tutorials on YouTube**]({yt_url})")
+else:
+    # Shown ONLY when no resume analysis has been run yet on Page 2
+    st.info("👆 Upload your resume and click Analyze above to generate your custom 3-week skill roadmaps.")
 
 st.divider()
 # --- ACTION BUTTONS (REPORT DOWNLOAD & RESET) ---
