@@ -533,7 +533,44 @@ if st.session_state.analyzed:
             st.success("No missing core technical competency gaps recognized.")
 
         st.divider()
+        # ==========================================
+        # PHASE 1: AI RESUME REWRITER SECTION
+        # ==========================================
+        st.divider()
+        st.markdown("### ⚡ AI Resume Power-Rewriter")
+        st.caption("Transform generic bullet points into high-impact, quantified ATS achievements.")
 
+        # Create a container with custom styling for the rewrites
+        with st.expander("✨ View Instant Bullet Point Optimizations", expanded=True):
+            
+            # Example 1
+            st.markdown("""
+            #### 1. Experience & Projects
+            * ❌ **Original:** *Worked on Python scripts for analyzing data.*
+            * ✅ **AI Optimized:** *Engineered automated Python ETL pipelines to process 10k+ daily records, reducing analytics reporting time by 40%.*
+            * 💡 **Why it works:** Uses strong technical action verbs (*Engineered*) and quantifies real business impact (*40% reduction*).
+            """)
+            
+            st.divider()
+
+            # Example 2
+            st.markdown("""
+            #### 2. Technical Skill Integration
+            * ❌ **Original:** *Wrote SQL queries for project dashboard.*
+            * ✅ **AI Optimized:** *Designed complex SQL queries and indexed relational tables, improving Power BI dashboard refresh latency by 25%.*
+            * 💡 **Why it works:** Demonstrates database optimization skills specifically relevant to high-performance analytics roles.
+            """)
+
+            st.divider()
+
+            # Example 3
+            st.markdown("""
+            #### 3. Problem Solving & Tooling
+            * ❌ **Original:** *Used GitHub for team project code management.*
+            * ✅ **AI Optimized:** *Managed collaborative Git workflows and feature branching, ensuring smooth code integration across a 5-member dev team.*
+            * 💡 **Why it works:** Highlights modern developer collaboration and version control standards.
+            """)
+    
         # --- ACTION BUTTONS (REPORT DOWNLOAD & RESET) ---
         col_btn1, col_btn2 = st.columns(2)
         
