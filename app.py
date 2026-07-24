@@ -592,5 +592,5 @@ else:
             )
 
         with col_btn2:
-            if st.button("🔄 Upload New Resume", use_container_width=True):
+            if st.button("🔄 Upload New Resume", use_container_width=True, key="reset_resume_btn"):
                 reset_analysis()
