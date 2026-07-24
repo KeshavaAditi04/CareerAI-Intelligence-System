@@ -521,37 +521,58 @@ if st.session_state.analyzed:
                 st.error(f"❌ {rec}")
         else:
             st.success("✅ Structural verification checks passed cleanly!")
+# --- PHASE 2: THE SKILL GAP BRIDGE (INTERACTIVE ROADMAP) ---
+st.subheader("🌉 Skill Gap Bridge & Learning Roadmaps")
+st.caption("Interactive step-by-step action plans to bridge your identified technical skill gaps.")
 
-        st.subheader("🎯 Missing Technical Competencies")
-        if st.session_state.skill_gaps:
-            cols = st.columns(len(st.session_state.skill_gaps) if len(st.session_state.skill_gaps) < 4 else 4)
-            for idx, gap in enumerate(st.session_state.skill_gaps):
-                with cols[idx % 4]:
-                    st.info(f"🔍 **{gap.upper()}**")
-                    st.markdown(f"[Find Study Guides ↗]({get_youtube_link(gap)})")
-        else:
-            st.success("No missing core technical competency gaps recognized.")
+if st.session_state.skill_gaps:
+    for idx, gap in enumerate(st.session_state.skill_gaps, 1):
+        gap_clean = gap.strip().title()
+        
+        with st.expander(f"🎯 Roadmap to Master: **{gap_clean}**", expanded=(idx == 1)):
+            st.markdown(f"### 🚀 3-Step Level-Up Guide: {gap_clean}")
+            
+            col1, col2, col3 = st.columns(3)
+            
+            with col1:
+                st.markdown("#### 1️⃣ Core Fundamentals")
+                st.info(f"Learn core syntax, key principles, and foundational concepts for **{gap_clean}**.")
+                st.caption("⏱️ Estimated Time: 1–2 Weeks")
+                
+            with col2:
+                st.markdown("#### 2️⃣ Hands-on Project")
+                st.warning(f"Build a mini-project applying **{gap_clean}** alongside your current tech stack.")
+                st.caption("🛠️ Portfolio Piece")
+                
+            with col3:
+                st.markdown("#### 3️⃣ Resume & ATS Prep")
+                st.success(f"Add **{gap_clean}** achievements with quantified metrics to your bullet points.")
+                st.caption("💼 Job-Ready Output")
+            
+            st.markdown("---")
+            search_url = f"https://www.google.com/search?q=free+learning+roadmap+for+{gap_clean.replace(' ', '+')}"
+            st.markdown(f"🔗 [**Explore Free Learning Resources for {gap_clean}**]({search_url})")
 
-        st.divider()
-    # ==========================================
-# PHASE 1: DYNAMIC AI RESUME REWRITER
-# ==========================================
-st.divider()
-st.markdown("### ⚡ AI Resume Power-Rewriter")
-st.caption("Transform generic bullet points into high-impact, quantified ATS achievements.")
-
-with st.expander("✨ View Instant Bullet Point Optimizations", expanded=True):
-    # Check if dynamic rewrites exist in session state
-    if "ai_rewrites" in st.session_state and st.session_state.ai_rewrites:
-        for idx, item in enumerate(st.session_state.ai_rewrites, 1):
-            st.markdown(f"#### {idx}. Bullet Point Optimization")
-            st.markdown(f"❌ **Original:** *{item.get('original', 'N/A')}*")
-            st.markdown(f"✅ **AI Optimized:** *{item.get('optimized', 'N/A')}*")
-            st.markdown(f"💡 **Why it works:** {item.get('reason', 'N/A')}")
-            if idx < len(st.session_state.ai_rewrites):
-                st.divider()
-    else:
-        st.info("👆 Run the resume analysis above to view dynamic AI bullet point optimizations!")
+else:
+    # Default visual preview if no skills are analyzed yet
+    st.info("💡 Run an analysis to generate customized learning roadmaps for your missing skills!")
+    
+    # Fallback preview so your interface never looks empty
+    with st.expander("🎯 Preview Roadmap: **Docker & Containerization**", expanded=True):
+        st.markdown("### 🚀 3-Step Level-Up Guide: Docker")
+        c1, c2, c3 = st.columns(3)
+        with c1:
+            st.markdown("#### 1️⃣ Core Fundamentals")
+            st.info("Containers vs VMs, Dockerfiles, and images.")
+            st.caption("⏱️ 1 Week")
+        with c2:
+            st.markdown("#### 2️⃣ Hands-on Project")
+            st.warning("Containerize a Python API with PostgreSQL.")
+            st.caption("🛠️ Portfolio Piece")
+        with c3:
+            st.markdown("#### 3️⃣ Resume & ATS Prep")
+            st.success("Highlight containerized deployments in project section.")
+            st.caption("💼 Job-Ready")
     
         # --- ACTION BUTTONS (REPORT DOWNLOAD & RESET) ---
         col_btn1, col_btn2 = st.columns(2)
