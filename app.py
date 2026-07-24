@@ -321,8 +321,13 @@ st.markdown(custom_css, unsafe_allow_html=True)
 
 # --- 5. PAGE 1: CS CAREER EXPLORER ---
 if page == "💻 CS Career Explorer":
-    st.title("CareerAI Computer Science Career Assistant")
-    st.write("### Scope: Optimized for Computer Science, IT, and Software Engineering pathways.")
+    # --- PAGE 1 LOGO HEADER ---
+col_logo, col_header = st.columns([1, 4])
+with col_logo:
+    st.image(current_logo, width=130)
+with col_header:
+    st.title("CareerAI CS Career Assistant")
+    st.markdown("**Scope:** Optimized for Computer Science, IT, and Software Engineering pathways.")
     st.write("Upload your resume to discover which technical career domain matches your skills best.")
     
     benchmarks = {
@@ -388,8 +393,14 @@ if page == "💻 CS Career Explorer":
 
 # --- 6. PAGE 2: RESUME MATCH ANALYZER ---
 else:
-    st.title("CareerAI Computer Science Career Assistant")
-    st.write("### Scope: Optimized for Computer Science, IT, and Software Engineering pathways.")
+    # --- PAGE 2 LOGO HEADER ---
+col_logo, col_header = st.columns([1, 4])
+with col_logo:
+    st.image(current_logo, width=130)
+with col_header:
+    st.title("CareerAI Resume Match Analyzer")
+    st.markdown("**Scope:** Optimized for Computer Science, IT, and Software Engineering pathways.")
+    
     st.write("Analyze how well your current resume aligns with a targeted job specification.")
     
     if "reset_counter" not in st.session_state:
