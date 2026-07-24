@@ -563,15 +563,24 @@ if "skill_gaps" in st.session_state and st.session_state.skill_gaps:
 
 else:
     st.info("👆 Upload a resume and run analysis to generate customized learning roadmaps for your missing skills!")
-    
-        # --- ACTION BUTTONS (REPORT DOWNLOAD & RESET) ---
-    col_btn1, col_btn2 = st.columns(2)
-        
-        with col_btn1:
-            pdf_bytes = create_pdf_report(
-                st.session_state.percentage, 
-                st.session_state.skill_gaps, 
-                st.session_state.narrative
-            )
-            st.download_button(
-                label="📥 Download Summary Rep
+st.divider()
+# --- ACTION BUTTONS (REPORT DOWNLOAD & RESET) ---
+col_btn1, col_btn2 = st.columns(2)
+with col_btn1:
+    pdf_bytes = create_pdf_report(
+        st.session_state.percentage, 
+        st.session_state.skill_gaps, 
+        st.session_state.narrative
+    )
+    st.download_button(
+        label="📥 Download Summary Report (PDF)",
+        data=pdf_bytes,
+        file_name="Career_Analysis_Report.pdf",
+        mime="application/pdf",
+        use_container_width=True,
+        key="dl_report_pdf"
+    )
+
+with col_btn2:
+    if st.button("🔄 Upload New Resume", use_container_width=True, key="reset_resume_btn"):
+        st.rerun()
