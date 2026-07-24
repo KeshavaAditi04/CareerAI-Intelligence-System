@@ -402,7 +402,7 @@ else:
         st.image(current_logo, use_container_width=True)
     st.title("CareerAI Resume Match Analyzer")
     st.markdown("**Scope:** Optimized for Computer Science, IT, and Software Engineering pathways.")
-        st.write("Analyze how well your current resume aligns with a targeted job specification.")
+    st.write("Analyze how well your current resume aligns with a targeted job specification.")
     
     if "reset_counter" not in st.session_state:
         st.session_state["reset_counter"] = 0
