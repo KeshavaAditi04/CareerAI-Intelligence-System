@@ -319,6 +319,11 @@ custom_css = (css_template
 
 st.markdown(custom_css, unsafe_allow_html=True)
 
+# --- 1. LOGO DEFINITIONS (Define before rendering headers) ---
+GREEN_LOGO = "https://raw.githubusercontent.com/KeshavaAditi04/CareerAI-Intelligence-System/main/IMG_20260725_000901.png"
+WHITE_LOGO = "https://raw.githubusercontent.com/KeshavaAditi04/CareerAI-Intelligence-System/main/IMG_20260725_000915.png"
+current_logo = GREEN_LOGO if page == "💻 CS Career Explorer" else WHITE_LOGO
+
 # --- 5. PAGE 1: CS CAREER EXPLORER ---
 if page == "💻 CS Career Explorer":
     col_logo, col_header = st.columns([1, 4])
