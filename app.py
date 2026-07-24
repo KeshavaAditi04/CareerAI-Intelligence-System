@@ -565,7 +565,7 @@ else:
     st.info("👆 Upload a resume and run analysis to generate customized learning roadmaps for your missing skills!")
     
         # --- ACTION BUTTONS (REPORT DOWNLOAD & RESET) ---
-        col_btn1, col_btn2 = st.columns(2)
+    col_btn1, col_btn2 = st.columns(2)
         
         with col_btn1:
             pdf_bytes = create_pdf_report(
