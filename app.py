@@ -319,19 +319,19 @@ custom_css = (css_template
 
 st.markdown(custom_css, unsafe_allow_html=True)
 
-# --- 1. LOGO DEFINITIONS (Define before rendering headers) ---
-GREEN_LOGO = "https://raw.githubusercontent.com/KeshavaAditi04/CareerAI-Intelligence-System/main/IMG_20260725_000901.png"
-WHITE_LOGO = "https://raw.githubusercontent.com/KeshavaAditi04/CareerAI-Intelligence-System/main/IMG_20260725_000915.png"
+# --- LOGO DEFINITIONS ---
+GREEN_LOGO = "https://raw.githubusercontent.com/KeshavaAditi04/CareerAI-Intelligence-System/main/1000349880.png"
+WHITE_LOGO = "https://raw.githubusercontent.com/KeshavaAditi04/CareerAI-Intelligence-System/main/1000349882.png"
 current_logo = GREEN_LOGO if page == "💻 CS Career Explorer" else WHITE_LOGO
 
 # --- 5. PAGE 1: CS CAREER EXPLORER ---
 if page == "💻 CS Career Explorer":
-    col_logo, col_header = st.columns([1, 4])
-    with col_logo:
-        st.image(current_logo, width=130)
-    with col_header:
+    col_left, col_mid, col_right = st.columns([1, 2, 1])
+    with col_mid:
+        st.image(current_logo, use_container_width=True)
         st.title("CareerAI CS Career Assistant")
         st.markdown("**Scope:** Optimized for Computer Science, IT, and Software Engineering pathways.")
+
         st.write("Upload your resume to discover which technical career domain matches your skills best.")
     
     benchmarks = {
@@ -397,12 +397,11 @@ if page == "💻 CS Career Explorer":
 
 # --- 6. PAGE 2: RESUME MATCH ANALYZER ---
 else:
-    col_logo, col_header = st.columns([1, 4])
-    with col_logo:
-        st.image(current_logo, width=130)
-    with col_header:
-        st.title("CareerAI Resume Match Analyzer")
-        st.markdown("**Scope:** Optimized for Computer Science, IT, and Software Engineering pathways.")
+    col_left, col_mid, col_right = st.columns([1, 2, 1])
+    with col_mid:
+        st.image(current_logo, use_container_width=True)
+    st.title("CareerAI Resume Match Analyzer")
+    st.markdown("**Scope:** Optimized for Computer Science, IT, and Software Engineering pathways.")
         st.write("Analyze how well your current resume aligns with a targeted job specification.")
     
     if "reset_counter" not in st.session_state:
