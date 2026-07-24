@@ -624,7 +624,6 @@ else:
                 st.session_state.skill_gaps, 
                 st.session_state.narrative
             )
-        st.info("💡 **Thesis Tip:** Press **Ctrl + P** (or **Cmd + P** on Mac) in your browser to save a clean visual snapshot of this full dashboard UI for your final thesis write-up.")
             st.download_button(
                 label="📥 Download Summary Report (PDF)",
                 data=pdf_bytes,
