@@ -122,13 +122,13 @@ def create_pdf_report(percentage, gaps, summary):
     pdf.set_font("Arial", '', 11)
     pdf.multi_cell(0, 10, f"Analysis Summary:\n{safe_summary}")
     return pdf.output(dest='S').encode('latin-1')
+
 def create_radar_chart(match_score, ats_score, interview_prob):
     categories = ['<b>Skill Alignment</b>', '<b>Resume Readiness</b>', '<b>Callback Likelihood</b>', '<b>Match Score</b>']
     values = [match_score, ats_score, interview_prob, match_score]
 
     fig = go.Figure()
 
-    # User Score Polygon
     fig.add_trace(go.Scatterpolar(
         r=values,
         theta=categories,
@@ -137,13 +137,12 @@ def create_radar_chart(match_score, ats_score, interview_prob):
         line=dict(width=2)
     ))
 
-    # Target Benchmark Polygon (100% ideal)
     fig.add_trace(go.Scatterpolar(
         r=[100, 100, 100, 100],
         theta=categories,
         fill='toself',
         name='Ideal Target',
-        fillcolor='rgba(148, 163, 184, 0.15)', # Light grey background target
+        fillcolor='rgba(148, 163, 184, 0.15)',
         line=dict(color='#94A3B8', width=1, dash='dash')
     ))
 
@@ -152,7 +151,7 @@ def create_radar_chart(match_score, ats_score, interview_prob):
             radialaxis=dict(visible=True, range=[0, 100], color="#1E293B"),
             angularaxis=dict(
                 color="#1E293B", 
-                tickfont=dict(size=12)  # Replaced invalid font/weight keys
+                tickfont=dict(size=12)
             )
         ),
         showlegend=True,
@@ -165,7 +164,6 @@ def create_radar_chart(match_score, ats_score, interview_prob):
     return fig
     
 def reset_analysis():
-    # 1. Reset metrics and flags
     st.session_state.analyzed = False
     st.session_state.percentage = 0.0
     st.session_state.skill_gaps = []
@@ -175,7 +173,6 @@ def reset_analysis():
     st.session_state.resume_suggestions = []
     st.session_state.matched_skills = []
     
-
     st.session_state["reset_counter"] = st.session_state.get("reset_counter", 0) + 1
     
     for key in ["p1_uploader", "p2_uploader"]:
@@ -217,7 +214,6 @@ page = st.sidebar.radio(
 
 st.sidebar.divider()
 
-# --- NEW PROFESSIONAL ABOUT SECTION ---
 st.sidebar.markdown("### 🎯 About CareerAI")
 st.sidebar.markdown("CareerAI helps Computer Science students:")
 st.sidebar.write("✔ Find suitable career paths")
@@ -228,7 +224,6 @@ st.sidebar.write("✔ Receive AI recommendations")
 
 st.sidebar.markdown("---")
 
-# --- EXPANDED MATURED DEVELOPER CARD ---
 st.sidebar.markdown("### 👩🏻‍💻 Developer Matrix")
 st.sidebar.write("**Developed By:** Aditi Das")
 st.sidebar.write("**Version:** `v2.0`")
@@ -369,14 +364,13 @@ if page == "💻 CS Career Explorer":
                 
                 st.success(f"💥 Top Recommended Track: **{df.iloc[0]['Target Domain']}**")
                 
-                # --- GREEN + GOLD THEME FOR CS CAREER EXPLORER ---
                 fig_bar = px.bar(
                     df, 
                     x='Match Strength (%)', 
                     y='Target Domain', 
                     orientation='h', 
                     color='Match Strength (%)', 
-                    color_continuous_scale=[[0, '#1E4620'], [1, '#D4AF37']], # Deep Forest Green to Rich Gold
+                    color_continuous_scale=[[0, '#1E4620'], [1, '#D4AF37']],
                     text='Match Strength (%)'
                 )
                 
@@ -397,6 +391,7 @@ else:
     st.title("CareerAI Computer Science Career Assistant")
     st.write("### Scope: Optimized for Computer Science, IT, and Software Engineering pathways.")
     st.write("Analyze how well your current resume aligns with a targeted job specification.")
+    
     if "reset_counter" not in st.session_state:
         st.session_state["reset_counter"] = 0
 
@@ -462,11 +457,13 @@ else:
                     
                 st.session_state.analyzed = True
                 status.update(label="Analysis Complete!", state="complete", expanded=False)
-if st.session_state.analyzed:
+
+    # --- RENDER RESULTS IF ANALYZED ---
+    if st.session_state.analyzed:
         st.subheader("📊 Alignment Metrics Hub")
         st.info(st.session_state.narrative)
         
-        # --- TOP LEVEL GAUGES ---
+        # Top level gauges
         col1, col2, col3 = st.columns(3)
         chart_text_color = "#1E293B" 
         
@@ -501,7 +498,7 @@ if st.session_state.analyzed:
 
         st.divider()
 
-        # --- NEW RADAR CHART COMPARISON SECTION ---
+        # Radar Chart
         st.subheader("🕸️ Profile Alignment Radar")
         st.plotly_chart(
             create_radar_chart(
@@ -514,81 +511,79 @@ if st.session_state.analyzed:
 
         st.divider()
 
-        # --- SUGGESTIONS & MISSING SKILLS ---
+        # Suggestions & Critical Feedback
         st.subheader("💡 Suggested Improvements")
         if st.session_state.resume_suggestions:
             for rec in st.session_state.resume_suggestions:
                 st.error(f"❌ {rec}")
         else:
             st.success("✅ Structural verification checks passed cleanly!")
-# =========================================================
-# PHASE 2: CUSTOM 3-WEEK SKILL GAP ROADMAP (RESUME PARSER)
-# =========================================================
-st.subheader("🌉 Custom 3-Week Skill Gap Roadmap")
-st.caption("Personalized learning plans generated directly from your resume and job description analysis.")
 
-# Retrieve analyzed skill gaps from session state
-gaps = st.session_state.get("skill_gaps", [])
+        st.divider()
 
-if gaps and isinstance(gaps, list) and len(gaps) > 0:
-    for idx, item in enumerate(gaps, 1):
-        # Extract custom AI-generated fields
-        if isinstance(item, dict):
-            skill_name = item.get("skill", f"Skill {idx}").strip().title()
-            w1_text = item.get("week1", "Master core fundamentals and syntax.")
-            w2_text = item.get("week2", "Build a practical hands-on project.")
-            w3_text = item.get("week3", "Draft quantified resume bullet points.")
-            yt_query = item.get("yt_search", f"{skill_name} full tutorial").replace(" ", "+")
+        # Custom 3-Week Skill Gap Roadmap
+        st.subheader("🌉 Custom 3-Week Skill Gap Roadmap")
+        st.caption("Personalized learning plans generated directly from your resume and job description analysis.")
+
+        gaps = st.session_state.get("skill_gaps", [])
+
+        if gaps and len(gaps) > 0:
+            for idx, item in enumerate(gaps, 1):
+                if isinstance(item, dict):
+                    skill_name = item.get("skill", f"Skill {idx}").strip().title()
+                    w1_text = item.get("week1", "Master core fundamentals and syntax.")
+                    w2_text = item.get("week2", "Build a practical hands-on project.")
+                    w3_text = item.get("week3", "Draft quantified resume bullet points.")
+                    yt_query = item.get("yt_search", f"{skill_name} full tutorial").replace(" ", "+")
+                else:
+                    skill_name = str(item).strip().title()
+                    w1_text = f"Master foundational syntax and concepts for {skill_name}."
+                    w2_text = f"Build a practical mini-project applying {skill_name}."
+                    w3_text = f"Add quantified {skill_name} metrics to your resume."
+                    yt_query = f"{skill_name}+tutorial+full+course".replace(" ", "+")
+
+                yt_url = f"https://www.youtube.com/results?search_query={yt_query}"
+
+                with st.expander(f"🎯 **{skill_name}** — Customized 3-Week Plan", expanded=(idx == 1)):
+                    col_w1, col_w2, col_w3 = st.columns(3)
+                    
+                    with col_w1:
+                        st.markdown("#### 🗓️ Week 1: Fundamentals")
+                        st.info(w1_text)
+                        
+                    with col_w2:
+                        st.markdown("#### 🗓️ Week 2: Mini-Project")
+                        st.warning(w2_text)
+                        
+                    with col_w3:
+                        st.markdown("#### 🗓️ Week 3: ATS & Resume")
+                        st.success(w3_text)
+
+                    st.markdown("---")
+                    st.markdown(f"📺 [**Watch Free {skill_name} Tutorials on YouTube**]({yt_url})")
+
         else:
-            # Fallback if skill_gaps is a list of skill strings from Gemini
-            skill_name = str(item).strip().title()
-            w1_text = f"Master foundational syntax and concepts for {skill_name}."
-            w2_text = f"Build a practical mini-project applying {skill_name}."
-            w3_text = f"Add quantified {skill_name} metrics to your resume."
-            yt_query = f"{skill_name}+tutorial+full+course".replace(" ", "+")
+            st.success("🎉 No significant skill gaps detected! Your technical skills align well with the target role.")
 
-        yt_url = f"https://www.youtube.com/results?search_query={yt_query}"
+        st.divider()
 
-        with st.expander(f"🎯 **{skill_name}** — Customized 3-Week Plan", expanded=(idx == 1)):
-            col1, col2, col3 = st.columns(3)
-            
-            with col1:
-                st.markdown("#### 🗓️ Week 1: Fundamentals")
-                st.info(w1_text)
-                
-            with col2:
-                st.markdown("#### 🗓️ Week 2: Mini-Project")
-                st.warning(w2_text)
-                
-            with col3:
-                st.markdown("#### 🗓️ Week 3: ATS & Resume")
-                st.success(w3_text)
+        # Export & Reset Actions
+        col_btn1, col_btn2 = st.columns(2)
+        with col_btn1:
+            pdf_bytes = create_pdf_report(
+                st.session_state.percentage, 
+                st.session_state.skill_gaps, 
+                st.session_state.narrative
+            )
+            st.download_button(
+                label="📥 Download Summary Report (PDF)",
+                data=pdf_bytes,
+                file_name="Career_Analysis_Report.pdf",
+                mime="application/pdf",
+                use_container_width=True,
+                key="dl_report_pdf"
+            )
 
-            st.markdown("---")
-            st.markdown(f"📺 [**Watch Free {skill_name} Tutorials on YouTube**]({yt_url})")
-
-else:
-    # Shown ONLY when no resume analysis has been run yet on Page 2
-    st.info("👆 Upload your resume and click Analyze above to generate your custom 3-week skill roadmaps.")
-
-st.divider()
-# --- ACTION BUTTONS (REPORT DOWNLOAD & RESET) ---
-col_btn1, col_btn2 = st.columns(2)
-with col_btn1:
-    pdf_bytes = create_pdf_report(
-        st.session_state.percentage, 
-        st.session_state.skill_gaps, 
-        st.session_state.narrative
-    )
-    st.download_button(
-        label="📥 Download Summary Report (PDF)",
-        data=pdf_bytes,
-        file_name="Career_Analysis_Report.pdf",
-        mime="application/pdf",
-        use_container_width=True,
-        key="dl_report_pdf"
-    )
-
-with col_btn2:
-    if st.button("🔄 Upload New Resume", use_container_width=True, key="reset_resume_btn"):
-        st.rerun()
+        with col_btn2:
+            if st.button("🔄 Upload New Resume", use_container_width=True, key="reset_resume_btn"):
+                reset_analysis()
