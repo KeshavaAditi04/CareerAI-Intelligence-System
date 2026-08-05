@@ -186,15 +186,10 @@ def create_pdf_report(percentage, gaps, summary):
   pdf.add_page()
   pdf.set_font("Arial", "B", 16)
   pdf.cell(200, 10, "CareerAI Analytics Summary Report", ln=True, align="C")
-
-  # Strip non-ASCII characters to prevent rendering errors in standard FPDF
   safe_summary = summary.encode("ascii", "ignore").decode("ascii")
-
   pdf.ln(10)
   pdf.set_font("Arial", "", 11)
   pdf.multi_cell(0, 10, f"Analysis Summary:\n{safe_summary}")
-
-  # fpdf2: calling pdf.output() without arguments returns bytes/bytearray directly
   output = pdf.output()
   if isinstance(output, str):
     return output.encode("latin-1")
@@ -414,26 +409,17 @@ custom_css = (
 
 st.markdown(custom_css, unsafe_allow_html=True)
 
-# --- LOGO DEFINITIONS ---
-GREEN_LOGO = "https://raw.githubusercontent.com/KeshavaAditi04/CareerAI-Intelligence-System/main/1000349880.png"
-WHITE_LOGO = "https://raw.githubusercontent.com/KeshavaAditi04/CareerAI-Intelligence-System/main/1000349882.png"
-current_logo = GREEN_LOGO if page == "💻 CS Career Explorer" else WHITE_LOGO
-
 # --- 5. PAGE 1: CS CAREER EXPLORER ---
 if page == "💻 CS Career Explorer":
-  col_left, col_mid, col_right = st.columns([1, 2, 1])
-  with col_mid:
-    st.image(current_logo, use_container_width=True)
-    st.title("CareerAI CS Career Assistant")
-    st.markdown(
-        "**Scope:** Optimized for Computer Science, IT, and Software"
-        " Engineering pathways."
-    )
-
-    st.write(
-        "Upload your resume to discover which technical career domain matches"
-        " your skills best."
-    )
+  st.title("CareerAI CS Career Assistant")
+  st.markdown(
+      "**Scope:** Optimized for Computer Science, IT, and Software Engineering"
+      " pathways."
+  )
+  st.write(
+      "Upload your resume to discover which technical career domain matches"
+      " your skills best."
+  )
 
   benchmarks = {
       "Data Analytics": (
@@ -523,9 +509,6 @@ if page == "💻 CS Career Explorer":
 
 # --- 6. PAGE 2: RESUME MATCH ANALYZER ---
 else:
-  col_left, col_mid, col_right = st.columns([1, 2, 1])
-  with col_mid:
-    st.image(current_logo, use_container_width=True)
   st.title("CareerAI Resume Match Analyzer")
   st.markdown(
       "**Scope:** Optimized for Computer Science, IT, and Software Engineering"
