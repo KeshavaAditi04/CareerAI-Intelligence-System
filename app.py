@@ -186,11 +186,19 @@ def create_pdf_report(percentage, gaps, summary):
   pdf.add_page()
   pdf.set_font("Arial", "B", 16)
   pdf.cell(200, 10, "CareerAI Analytics Summary Report", ln=True, align="C")
+
+  # Strip non-ASCII characters to prevent rendering errors in standard FPDF
   safe_summary = summary.encode("ascii", "ignore").decode("ascii")
+
   pdf.ln(10)
   pdf.set_font("Arial", "", 11)
   pdf.multi_cell(0, 10, f"Analysis Summary:\n{safe_summary}")
-  return bytes(pdf.output(dest="S"))
+
+  # fpdf2: calling pdf.output() without arguments returns bytes/bytearray directly
+  output = pdf.output()
+  if isinstance(output, str):
+    return output.encode("latin-1")
+  return bytes(output)
 
 
 def create_radar_chart(match_score, ats_score, interview_prob):
