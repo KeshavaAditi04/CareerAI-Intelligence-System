@@ -320,9 +320,9 @@ custom_css = (css_template
 st.markdown(custom_css, unsafe_allow_html=True)
 
 # --- LOGO DEFINITIONS ---
-GREEN_LOGO = "https://raw.githubusercontent.com/KeshavaAditi04/CareerAI-Intelligence-System/main/1000349880.png"
-WHITE_LOGO = "https://raw.githubusercontent.com/KeshavaAditi04/CareerAI-Intelligence-System/main/1000349882.png"
-current_logo = GREEN_LOGO if page == "💻 CS Career Explorer" else WHITE_LOGO
+# GREEN_LOGO = "https://raw.githubusercontent.com/KeshavaAditi04/CareerAI-Intelligence-System/main/1000349880.png"
+# WHITE_LOGO = "https://raw.githubusercontent.com/KeshavaAditi04/CareerAI-Intelligence-System/main/1000349882.png"
+# current_logo = GREEN_LOGO if page == "💻 CS Career Explorer" else WHITE_LOGO
 
 # --- 5. PAGE 1: CS CAREER EXPLORER ---
 if page == "💻 CS Career Explorer":
