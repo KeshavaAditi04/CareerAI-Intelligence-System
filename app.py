@@ -339,16 +339,19 @@ else:
 
 css_template = """
     <style>
-    [data-testid="stAppViewContainer"], 
-    [data-testid="stHeader"], 
-    .main, 
-    .stApp,
-    [data-testid="stAppViewBlockContainer"] {
+    /* Apply background only to top-level app wrapper */
+    .stApp {
         background-image: url("VAR_BG_URL") !important;
         background-size: cover !important;
         background-position: center !important;
         background-attachment: fixed !important;
-        display: block !important;
+    }
+
+    /* Make interior containers transparent so background shows through */
+    [data-testid="stAppViewContainer"],
+    [data-testid="stHeader"],
+    [data-testid="stAppViewBlockContainer"] {
+        background-color: transparent !important;
     }
 
     .stMarkdown p, .stMarkdown li, div, p, span, .stText p {
